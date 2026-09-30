@@ -16,7 +16,7 @@ Halo: AI-Powered Migraine Care Companion
 | | |
 |---|---|
 | 🎥 **Proposal video** | [Watch the proposal presentation on YouTube] https://youtu.be/Kb44Jap_8og |
-| 💼 **LinkedIn post** | [Read the project announcement](LINKEDIN_POST_LINK) |
+| 💼 **LinkedIn post** | [Read the project announcement]https://www.linkedin.com/posts/krishnansmita_halo-ai-powered-migraine-care-companion-activity-7511157599111847936-yD9V?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAL-jvEBG3XA5cCh-Z3noyzpP1Fi4LZ61wk |
 
 
 **Team:** BatWarriors LLC — Smita Krishnan, Sai Charan Beemara (Project Manager / Team Lead)
