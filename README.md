@@ -20,6 +20,7 @@ Halo: AI-Powered Migraine Care Companion
 
 
 **Team:** BatWarriors LLC — Smita Krishnan, Sai Charan Beemara (Project Manager / Team Lead)
+
 **Client:** Dr. V. Govindaswamy
 
 ---
