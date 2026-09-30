@@ -1,9 +1,6 @@
 # halo-migraine-companion
 Halo: AI-Powered Migraine Care Companion
 
-<p align="center">
-  <img src="assets/halo-logo.png" alt="Halo — Migraine Care Companion" width="360">
-</p>
 
 <h3 align="center">An AI-powered migraine care companion</h3>
 
