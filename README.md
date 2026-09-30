@@ -149,8 +149,3 @@ Halo is in active development.
 
 ---
 
-<p align="center">
-  <a href="YOUTUBE_VIDEO_LINK">YouTube</a> ·
-  <a href="LINKEDIN_POST_LINK">LinkedIn</a> ·
-  <a href="https://github.com/skrishnan83/halo-migraine-companion">GitHub</a>
-</p>
