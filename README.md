@@ -56,11 +56,7 @@ We studied real App Store reviews of the three most popular migraine apps and co
 | **N1-Headache** | Painfully slow to type in · can't adjust medication doses · rigid limits and 90-day lockouts · no support or updates |
 
 <details>
-<summary>See the highlighted reviews</summary>
 
-![Migraine Buddy reviews]"C:\Users\krish\Desktop\CUC\Advanced Software Engineering Capstone\Proposal Halo\halo-migraine-companion\docs\images\users-migraine-buddy.png"
-![Bearable reviews] "C:\Users\krish\Desktop\CUC\Advanced Software Engineering Capstone\Proposal Halo\halo-migraine-companion\docs\images\users-bearable.png"
-![N1-Headache reviews] "C:\Users\krish\Desktop\CUC\Advanced Software Engineering Capstone\Proposal Halo\halo-migraine-companion\docs\images\users-n1-headache.png"
 
 </details>
 
