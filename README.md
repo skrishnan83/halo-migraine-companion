@@ -11,10 +11,6 @@ Halo: AI-Powered Migraine Care Companion
   Log a migraine in under a minute — by voice or by tap — and learn which treatments actually work for you.
 </p>
 
-<p align="center">
-  <a href="YOUTUBE_VIDEO_LINK"><img alt="Watch on YouTube" src="https://img.shields.io/badge/Watch-Proposal%20video-FF0000?logo=youtube&logoColor=white"></a>
-  <a href="LINKEDIN_POST_LINK"><img alt="Read on LinkedIn" src="https://img.shields.io/badge/Read-LinkedIn%20post-0A66C2?logo=linkedin&logoColor=white"></a>
-
 
 ---
 
