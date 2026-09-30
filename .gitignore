@@ -1,18 +1,29 @@
-# Build and Release Folders
-bin-debug/
-bin-release/
-[Oo]bj/
-[Bb]in/
+# Dependencies
+node_modules/
 
-# Other files and folders
-.settings/
+# Secrets — never commit these
+.env
+.env.*
+!.env.example
+google-services.json
+GoogleService-Info.plist
 
-# Executables
-*.swf
-*.air
-*.ipa
+# Expo / build output
+.expo/
+dist/
+web-build/
+ios/
+android/
 *.apk
+*.aab
+*.ipa
 
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+# Firebase
+.firebase/
+*-debug.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
