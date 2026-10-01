@@ -1,8 +1,6 @@
 # halo-migraine-companion
 Halo: AI-Powered Migraine Care Companion
-
-
-<h3 align="center"> HALO: An AI-powered migraine care companion</h3>
+<h1 align="center">Halo</h1> <h3 align="center">An AI-powered migraine care companion</h3> <p align="center"> Log a migraine in under a minute — by voice or by tap — and learn which treatments actually work for you. </p> <p align="center">
 
 <p align="center">
   Log a migraine in under a minute — by voice or by tap — and learn which treatments actually work for you.
