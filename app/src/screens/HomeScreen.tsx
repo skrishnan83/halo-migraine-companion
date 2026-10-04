@@ -1,28 +1,31 @@
-// HOME: greeting, the main actions, and your recent attacks.
+// HOME: greeting, the main actions, and your recent attacks (works offline).
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
 import { signOut } from "firebase/auth";
-import {
-  collection,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-  type Timestamp,
-} from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { collection, limit, onSnapshot, orderBy, query } from "firebase/firestore";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import type { ScreenProps } from "../navigation/types";
+import {
+  getPending,
+  onPendingChange,
+  syncPending,
+  type PendingAttack,
+} from "../services/attackQueue";
 import { auth, db } from "../services/firebase";
 import { colors } from "../theme/colors";
 
-type Attack = {
+type AttackItem = {
   id: string;
   severity: number;
-  startedAt: Timestamp;
+  startedAtMs: number;
   symptoms: string[];
-  note: string;
+  pending: boolean;
 };
+
+const cacheKey = (uid: string) => `halo.cache.${uid}`;
 
 function greeting(): string {
   const hour = new Date().getHours();
@@ -32,8 +35,8 @@ function greeting(): string {
 }
 
 // "Today, 11:51 AM", "Yesterday, 9:30 PM", or "Oct 2, 4:15 PM"
-function formatWhen(ts: Timestamp): string {
-  const d = ts.toDate();
+function formatWhen(ms: number): string {
+  const d = new Date(ms);
   const now = new Date();
   const yesterday = new Date();
   yesterday.setDate(now.getDate() - 1);
@@ -44,11 +47,23 @@ function formatWhen(ts: Timestamp): string {
 }
 
 export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
-  const [attacks, setAttacks] = useState<Attack[]>([]);
+  const uid = auth.currentUser?.uid;
+  const [remote, setRemote] = useState<AttackItem[]>([]);
+  const [pending, setPending] = useState<PendingAttack[]>([]);
+  const [online, setOnline] = useState(true);
 
-  // Listens to Firestore, so the list updates by itself when you save a log.
+  // 1. Show the last saved list straight away, even with no internet.
   useEffect(() => {
-    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+    AsyncStorage.getItem(cacheKey(uid))
+      .then((raw) => {
+        if (raw) setRemote((current) => (current.length ? current : JSON.parse(raw)));
+      })
+      .catch(() => {});
+  }, [uid]);
+
+  // 2. Live updates from the cloud.
+  useEffect(() => {
     if (!uid) return;
     const q = query(
       collection(db, "users", uid, "attacks"),
@@ -58,14 +73,74 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        setAttacks(
-          snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Attack, "id">) }))
-        );
+        // Offline and nothing cached by Firebase: keep showing the saved list.
+        if (snapshot.metadata.fromCache && snapshot.empty) return;
+        const items: AttackItem[] = snapshot.docs.map((d) => {
+          const data = d.data();
+          return {
+            id: d.id,
+            severity: data.severity,
+            startedAtMs: data.startedAt.toMillis(),
+            symptoms: data.symptoms ?? [],
+            pending: false,
+          };
+        });
+        setRemote(items);
+        if (!snapshot.metadata.fromCache) {
+          AsyncStorage.setItem(cacheKey(uid), JSON.stringify(items)).catch(() => {});
+        }
       },
       (e) => console.warn("Could not load attacks", e)
     );
     return unsubscribe;
-  }, []);
+  }, [uid]);
+
+  // 3. Logs waiting to upload, plus sync whenever the internet comes back.
+  const loadPending = useCallback(() => {
+    if (uid) getPending(uid).then(setPending);
+  }, [uid]);
+
+  useEffect(() => {
+    if (!uid) return;
+    loadPending();
+    const stopListening = onPendingChange(loadPending);
+    syncPending(uid);
+    const stopNet = NetInfo.addEventListener((state) => {
+      const isOnline = !!state.isConnected && state.isInternetReachable !== false;
+      setOnline(isOnline);
+      if (isOnline) syncPending(uid);
+    });
+    return () => {
+      stopListening();
+      stopNet();
+    };
+  }, [uid, loadPending]);
+
+  // Cloud logs + waiting logs, newest first.
+  const items = useMemo(() => {
+    const cloudIds = new Set(remote.map((r) => r.id));
+    const waiting: AttackItem[] = pending
+      .filter((p) => !cloudIds.has(p.id))
+      .map((p) => ({
+        id: p.id,
+        severity: p.severity,
+        startedAtMs: p.startedAtMs,
+        symptoms: p.symptoms,
+        pending: true,
+      }));
+    return [...waiting, ...remote].sort((a, b) => b.startedAtMs - a.startedAtMs).slice(0, 10);
+  }, [remote, pending]);
+
+  const waitingCount = items.filter((i) => i.pending).length;
+  let statusText = "All synced";
+  let statusColor = colors.sage;
+  if (!online) {
+    statusText = "Offline: logs are saved on this phone";
+    statusColor = colors.accent;
+  } else if (waitingCount > 0) {
+    statusText = `${waitingCount} waiting to sync`;
+    statusColor = colors.accent;
+  }
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -88,10 +163,17 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
         />
       </View>
 
-      <Text style={styles.section}>Recent attacks</Text>
+      <View style={styles.sectionRow}>
+        <Text style={styles.section}>Recent attacks</Text>
+        <View style={styles.status}>
+          <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
+          <Text style={styles.statusText}>{statusText}</Text>
+        </View>
+      </View>
+
       <FlatList
         style={styles.list}
-        data={attacks}
+        data={items}
         keyExtractor={(a) => a.id}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
@@ -107,7 +189,10 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
               <Text style={styles.badgeText}>{item.severity}</Text>
             </View>
             <View style={styles.cardBody}>
-              <Text style={styles.cardWhen}>{formatWhen(item.startedAt)}</Text>
+              <Text style={styles.cardWhen}>
+                {formatWhen(item.startedAtMs)}
+                {item.pending ? "  ·  Waiting to sync" : ""}
+              </Text>
               <Text style={styles.cardSymptoms} numberOfLines={2}>
                 {item.symptoms.length > 0 ? item.symptoms.join(", ") : "No symptoms noted"}
               </Text>
@@ -133,13 +218,17 @@ const styles = StyleSheet.create({
   greeting: { fontSize: 15, color: colors.muted, marginTop: 16 },
   title: { fontSize: 27, fontWeight: "700", color: colors.primary, marginTop: 4 },
   actions: { marginBottom: 8 },
-  section: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: colors.textDark,
+  sectionRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginTop: 28,
     marginBottom: 14,
   },
+  section: { fontSize: 15, fontWeight: "600", color: colors.textDark },
+  status: { flexDirection: "row", alignItems: "center", flexShrink: 1, marginLeft: 12 },
+  statusDot: { width: 8, height: 8, borderRadius: 4, marginRight: 6 },
+  statusText: { fontSize: 12.5, color: colors.muted, flexShrink: 1 },
   list: { flex: 1 },
   emptyCard: {
     backgroundColor: colors.secondaryLight,

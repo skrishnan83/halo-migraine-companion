@@ -1,7 +1,7 @@
 // QUICK LOG: record a migraine in a few taps (or by voice). Saved to Firestore under the user.
 import { Ionicons } from "@expo/vector-icons";
 import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioRecorder } from "expo-audio";
-import { addDoc, collection, serverTimestamp, Timestamp } from "firebase/firestore";
+import { queueAttack, syncPending } from "../services/attackQueue";
 import { useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -17,7 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import FormField from "../components/FormField";
 import type { ScreenProps } from "../navigation/types";
-import { auth, db } from "../services/firebase";
+import { auth } from "../services/firebase";
 import { transcribeAudio } from "../services/transcribe";
 import { colors } from "../theme/colors";
 
@@ -110,19 +110,18 @@ export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) 
     }
     setError("");
     setSaving(true);
-    try {
-      await addDoc(collection(db, "users", uid, "attacks"), {
+        try {
+      await queueAttack(uid, {
         severity,
-        startedAt: Timestamp.fromMillis(Date.now() - minutesAgo * 60000),
+        startedAtMs: Date.now() - minutesAgo * 60000,
         symptoms,
         note: note.trim(),
-        status: "ongoing",
-        createdAt: serverTimestamp(),
       });
+      syncPending(uid); // uploads in the background when there is internet
       navigation.goBack();
     } catch (e) {
       console.warn("Save failed", e);
-      setError("Couldn't save. Please check your connection and try again.");
+      setError("Couldn't save on this phone. Please try again.");
     } finally {
       setSaving(false);
     }
