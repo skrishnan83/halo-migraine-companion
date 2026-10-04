@@ -18,6 +18,8 @@ import { ensureUserProfile } from "./src/services/userProfile";
 import ForgotPasswordScreen from "./src/screens/ForgotPasswordScreen";
 import QuickLogScreen from "./src/screens/QuickLogScreen";
 import MedicationsScreen from "./src/screens/MedicationsScreen";
+import AboutScreen from "./src/screens/AboutScreen";
+import SplashScreen from "./src/screens/SplashScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -58,7 +60,9 @@ export default function App() {
             </>
           ) : (
             <>
+                            <Stack.Screen name="Splash" component={SplashScreen} />
               <Stack.Screen name="Welcome" component={WelcomeScreen} />
+                            <Stack.Screen name="About" component={AboutScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="Signup" component={SignupScreen} />
                             <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
