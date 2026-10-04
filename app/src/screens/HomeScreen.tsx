@@ -1,4 +1,4 @@
-// HOME: the main button opens Quick Log, and recent attacks are listed below.
+// HOME: greeting, the main actions, and your recent attacks.
 import { signOut } from "firebase/auth";
 import {
   collection,
@@ -24,13 +24,23 @@ type Attack = {
   note: string;
 };
 
+function greeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+}
+
+// "Today, 11:51 AM", "Yesterday, 9:30 PM", or "Oct 2, 4:15 PM"
 function formatWhen(ts: Timestamp): string {
-  return ts.toDate().toLocaleString([], {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const d = ts.toDate();
+  const now = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(now.getDate() - 1);
+  const time = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  if (d.toDateString() === now.toDateString()) return `Today, ${time}`;
+  if (d.toDateString() === yesterday.toDateString()) return `Yesterday, ${time}`;
+  return `${d.toLocaleDateString([], { month: "short", day: "numeric" })}, ${time}`;
 }
 
 export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
@@ -59,27 +69,37 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.header}>
+      <View style={styles.hero}>
         <Image
           source={require("../../assets/icon-mark.png")}
           style={styles.logo}
           resizeMode="contain"
         />
-        <View style={styles.headerText}>
-          <Text style={styles.title}>How are you feeling?</Text>
-          <Text style={styles.email}>{auth.currentUser?.email}</Text>
-        </View>
+        <Text style={styles.greeting}>{greeting()}</Text>
+        <Text style={styles.title}>How are you feeling?</Text>
       </View>
 
-      <Button title="Log a migraine" onPress={() => navigation.navigate("QuickLog")} />
+      <View style={styles.actions}>
+        <Button title="Log a migraine" onPress={() => navigation.navigate("QuickLog")} />
+        <Button
+          title="My medications"
+          variant="secondary"
+          onPress={() => navigation.navigate("Medications")}
+        />
+      </View>
 
       <Text style={styles.section}>Recent attacks</Text>
       <FlatList
+        style={styles.list}
         data={attacks}
         keyExtractor={(a) => a.id}
-        contentContainerStyle={attacks.length === 0 && styles.emptyWrap}
+        showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          <Text style={styles.empty}>No attacks logged yet. Tap "Log a migraine" when one starts.</Text>
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyText}>
+              No attacks logged yet. Tap "Log a migraine" when one starts.
+            </Text>
+          </View>
         }
         renderItem={({ item }) => (
           <View style={styles.card}>
@@ -96,35 +116,50 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
         )}
       />
 
-      <Pressable onPress={() => signOut(auth)} style={styles.logout} hitSlop={12}>
-        <Text style={styles.logoutText}>Log out</Text>
-      </Pressable>
+      <View style={styles.footer}>
+        <Text style={styles.email}>Signed in as {auth.currentUser?.email}</Text>
+        <Pressable onPress={() => signOut(auth)} hitSlop={12}>
+          <Text style={styles.logoutText}>Log out</Text>
+        </Pressable>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.white, paddingHorizontal: 28 },
-  header: { flexDirection: "row", alignItems: "center", marginTop: 16, marginBottom: 12 },
-  logo: { width: 56, height: 56 },
-  headerText: { marginLeft: 14, flex: 1 },
-  title: { fontSize: 22, fontWeight: "700", color: colors.primary },
-  email: { fontSize: 13.5, color: colors.muted, marginTop: 2 },
-  section: { fontSize: 15, fontWeight: "600", color: colors.textDark, marginTop: 28, marginBottom: 12 },
-  emptyWrap: { flexGrow: 1 },
-  empty: { fontSize: 14.5, color: colors.muted, lineHeight: 21 },
+  hero: { alignItems: "center", marginTop: 36, marginBottom: 32 },
+  logo: { width: 76, height: 76 },
+  greeting: { fontSize: 15, color: colors.muted, marginTop: 16 },
+  title: { fontSize: 27, fontWeight: "700", color: colors.primary, marginTop: 4 },
+  actions: { marginBottom: 8 },
+  section: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: colors.textDark,
+    marginTop: 28,
+    marginBottom: 14,
+  },
+  list: { flex: 1 },
+  emptyCard: {
+    backgroundColor: colors.secondaryLight,
+    borderRadius: 14,
+    paddingVertical: 28,
+    paddingHorizontal: 22,
+  },
+  emptyText: { fontSize: 14.5, color: colors.muted, lineHeight: 21, textAlign: "center" },
   card: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.secondaryLight,
     borderRadius: 14,
-    padding: 14,
+    padding: 16,
     marginBottom: 10,
   },
   badge: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     backgroundColor: colors.accent,
     alignItems: "center",
     justifyContent: "center",
@@ -132,7 +167,8 @@ const styles = StyleSheet.create({
   badgeText: { color: colors.white, fontSize: 17, fontWeight: "700" },
   cardBody: { marginLeft: 14, flex: 1 },
   cardWhen: { fontSize: 15, fontWeight: "600", color: colors.textDark },
-  cardSymptoms: { fontSize: 13.5, color: colors.muted, marginTop: 3 },
-  logout: { alignSelf: "center", paddingVertical: 14 },
-  logoutText: { fontSize: 15, color: colors.muted },
+  cardSymptoms: { fontSize: 13.5, color: colors.muted, marginTop: 3, lineHeight: 19 },
+  footer: { alignItems: "center", paddingTop: 12, paddingBottom: 16 },
+  email: { fontSize: 12.5, color: colors.muted, marginBottom: 8 },
+  logoutText: { fontSize: 15, fontWeight: "600", color: colors.primary },
 });

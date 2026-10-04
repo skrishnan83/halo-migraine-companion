@@ -1,7 +1,10 @@
-// QUICK LOG: record a migraine in a few taps. Saved to Firestore under the user.
+// QUICK LOG: record a migraine in a few taps (or by voice). Saved to Firestore under the user.
+import { Ionicons } from "@expo/vector-icons";
+import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioRecorder } from "expo-audio";
 import { addDoc, collection, serverTimestamp, Timestamp } from "firebase/firestore";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -15,6 +18,7 @@ import Button from "../components/Button";
 import FormField from "../components/FormField";
 import type { ScreenProps } from "../navigation/types";
 import { auth, db } from "../services/firebase";
+import { transcribeAudio } from "../services/transcribe";
 import { colors } from "../theme/colors";
 
 const WHEN_OPTIONS = [
@@ -33,6 +37,8 @@ const SYMPTOMS = [
   "Neck pain",
 ];
 
+type VoiceState = "idle" | "recording" | "transcribing";
+
 export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) {
   const [severity, setSeverity] = useState<number | null>(null);
   const [minutesAgo, setMinutesAgo] = useState(0);
@@ -40,11 +46,55 @@ export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) 
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [voice, setVoice] = useState<VoiceState>("idle");
+
+  const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+    const scrollRef = useRef<ScrollView>(null);
 
   function toggleSymptom(name: string) {
     setSymptoms((current) =>
       current.includes(name) ? current.filter((s) => s !== name) : [...current, name]
     );
+  }
+
+  async function startVoice() {
+    setError("");
+    try {
+      const permission = await AudioModule.requestRecordingPermissionsAsync();
+      if (!permission.granted) {
+        setError("Microphone access is off. Turn it on for Expo Go in your phone's Settings.");
+        return;
+      }
+      await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
+      await recorder.prepareToRecordAsync();
+      recorder.record();
+      setVoice("recording");
+    } catch (e) {
+      console.warn("Could not start recording", e);
+      setError("Couldn't start recording. Please try again.");
+      setVoice("idle");
+    }
+  }
+
+  async function stopVoice() {
+    setVoice("transcribing");
+    try {
+      await recorder.stop();
+      const uri = recorder.uri;
+      if (!uri) throw new Error("No recording was made");
+      const text = await transcribeAudio(uri);
+      if (text) {
+        setNote((current) => (current ? `${current} ${text}` : text));
+      } else {
+        setError("Didn't catch that. Please try again.");
+      }
+    } catch (e) {
+      console.warn("Voice entry failed", e);
+      setError("Couldn't turn your voice into text. Check your connection and try again.");
+    } finally {
+      await setAudioModeAsync({ allowsRecording: false }).catch(() => {});
+      setVoice("idle");
+    }
   }
 
   async function handleSave() {
@@ -55,6 +105,7 @@ export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) 
     }
     if (severity === null) {
       setError("Please choose how severe it is.");
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
       return;
     }
     setError("");
@@ -83,7 +134,11 @@ export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) 
         style={styles.flex}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          ref={scrollRef}
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+        >
           <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
             <Text style={styles.back}>‹ Back</Text>
           </Pressable>
@@ -139,6 +194,32 @@ export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) 
             })}
           </View>
 
+          <Text style={styles.section}>Add a note by voice</Text>
+          <Pressable
+            onPress={voice === "recording" ? stopVoice : startVoice}
+            disabled={voice === "transcribing"}
+            style={[styles.micBtn, voice === "recording" && styles.micBtnOn]}
+          >
+            {voice === "transcribing" ? (
+              <ActivityIndicator color={colors.primary} />
+            ) : (
+              <Ionicons
+                name={voice === "recording" ? "stop-circle-outline" : "mic-outline"}
+                size={22}
+                color={voice === "recording" ? colors.white : colors.primary}
+              />
+            )}
+            <Text style={[styles.micText, voice === "recording" && styles.micTextOn]}>
+              {voice === "idle" && "Tap to speak"}
+              {voice === "recording" && "Listening... tap to stop"}
+              {voice === "transcribing" && "Turning your voice into text..."}
+            </Text>
+          </Pressable>
+          <Text style={styles.privacy}>
+            Your voice is sent to a speech service to be turned into text. The recording isn't
+            saved to your Halo account.
+          </Text>
+
           <View style={{ marginTop: 20 }}>
             <FormField
               label="Note (optional)"
@@ -166,7 +247,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, fontWeight: "700", color: colors.primary, marginTop: 16 },
   section: { fontSize: 15, fontWeight: "600", color: colors.textDark, marginTop: 26, marginBottom: 12 },
   severityGrid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
-   severityBtn: {
+  severityBtn: {
     width: "18%",
     height: 52,
     borderRadius: 14,
@@ -192,5 +273,18 @@ const styles = StyleSheet.create({
   chipOn: { backgroundColor: colors.primary },
   chipText: { fontSize: 14.5, color: colors.textDark },
   chipTextOn: { color: colors.white },
+  micBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+  },
+  micBtnOn: { backgroundColor: colors.accent, borderColor: colors.accent },
+  micText: { fontSize: 15.5, fontWeight: "600", color: colors.primary, marginLeft: 10 },
+  micTextOn: { color: colors.white },
+  privacy: { fontSize: 12, color: colors.muted, lineHeight: 17, marginTop: 8 },
   error: { color: colors.danger, fontSize: 14, marginBottom: 4 },
 });

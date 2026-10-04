@@ -17,6 +17,7 @@ import { colors } from "./src/theme/colors";
 import { ensureUserProfile } from "./src/services/userProfile";
 import ForgotPasswordScreen from "./src/screens/ForgotPasswordScreen";
 import QuickLogScreen from "./src/screens/QuickLogScreen";
+import MedicationsScreen from "./src/screens/MedicationsScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -53,6 +54,7 @@ export default function App() {
                         <>
               <Stack.Screen name="Home" component={HomeScreen} />
               <Stack.Screen name="QuickLog" component={QuickLogScreen} />
+                            <Stack.Screen name="Medications" component={MedicationsScreen} />
             </>
           ) : (
             <>

@@ -6,7 +6,8 @@ export type RootStackParamList = {
   Signup: undefined;
   ForgotPassword: undefined;
   Home: undefined;
-  QuickLog: undefined;
+    QuickLog: undefined;
+  Medications: undefined;
 };
   Signup: undefined;
 };
