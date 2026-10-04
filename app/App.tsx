@@ -16,6 +16,7 @@ import { auth } from "./src/services/firebase";
 import { colors } from "./src/theme/colors";
 import { ensureUserProfile } from "./src/services/userProfile";
 import ForgotPasswordScreen from "./src/screens/ForgotPasswordScreen";
+import QuickLogScreen from "./src/screens/QuickLogScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -49,7 +50,10 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {user ? (
-            <Stack.Screen name="Home" component={HomeScreen} />
+                        <>
+              <Stack.Screen name="Home" component={HomeScreen} />
+              <Stack.Screen name="QuickLog" component={QuickLogScreen} />
+            </>
           ) : (
             <>
               <Stack.Screen name="Welcome" component={WelcomeScreen} />
