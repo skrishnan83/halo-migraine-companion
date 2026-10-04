@@ -14,6 +14,7 @@ import SignupScreen from "./src/screens/SignupScreen";
 import WelcomeScreen from "./src/screens/WelcomeScreen";
 import { auth } from "./src/services/firebase";
 import { colors } from "./src/theme/colors";
+import { ensureUserProfile } from "./src/services/userProfile";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -23,9 +24,12 @@ export default function App() {
 
   // Firebase tells us whenever someone logs in or out.
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
       setChecking(false);
+      if (firebaseUser) {
+        ensureUserProfile(firebaseUser).catch((e) => console.warn("Profile save failed", e));
+      }
     });
     return unsubscribe;
   }, []);
