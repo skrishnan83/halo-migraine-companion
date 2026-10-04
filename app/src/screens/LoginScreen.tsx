@@ -95,6 +95,10 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
             secureTextEntry
           />
 
+                    <Pressable onPress={() => navigation.navigate("ForgotPassword")} style={styles.forgot}>
+            <Text style={styles.link}>Forgot password?</Text>
+          </Pressable>
+
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
           <Button title="Log In" onPress={handleLogin} loading={loading} />
@@ -131,6 +135,7 @@ const styles = StyleSheet.create({
     marginBottom: 28,
   },
   error: { color: colors.danger, fontSize: 14, marginBottom: 4 },
+    forgot: { alignSelf: "flex-end", marginTop: -4, marginBottom: 14 },
   linkRow: { marginTop: 22, alignItems: "center" },
   linkText: { fontSize: 15, color: colors.muted },
   link: { color: colors.accent, fontWeight: "600" },

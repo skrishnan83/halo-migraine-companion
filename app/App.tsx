@@ -15,6 +15,7 @@ import WelcomeScreen from "./src/screens/WelcomeScreen";
 import { auth } from "./src/services/firebase";
 import { colors } from "./src/theme/colors";
 import { ensureUserProfile } from "./src/services/userProfile";
+import ForgotPasswordScreen from "./src/screens/ForgotPasswordScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -54,6 +55,7 @@ export default function App() {
               <Stack.Screen name="Welcome" component={WelcomeScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="Signup" component={SignupScreen} />
+                            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
             </>
           )}
         </Stack.Navigator>
