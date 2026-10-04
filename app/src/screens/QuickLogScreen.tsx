@@ -166,9 +166,9 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, fontWeight: "700", color: colors.primary, marginTop: 16 },
   section: { fontSize: 15, fontWeight: "600", color: colors.textDark, marginTop: 26, marginBottom: 12 },
   severityGrid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
-  severityBtn: {
+   severityBtn: {
     width: "18%",
-    aspectRatio: 1,
+    height: 52,
     borderRadius: 14,
     backgroundColor: colors.secondaryLight,
     alignItems: "center",
