@@ -20,6 +20,7 @@ import QuickLogScreen from "./src/screens/QuickLogScreen";
 import MedicationsScreen from "./src/screens/MedicationsScreen";
 import AboutScreen from "./src/screens/AboutScreen";
 import SplashScreen from "./src/screens/SplashScreen";
+import { signupState } from "./src/utils/signupState";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -30,6 +31,8 @@ export default function App() {
   // Firebase tells us whenever someone logs in or out.
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      // A new account is being created: stay on the account screens.
+      if (signupState.creating) return;
       setUser(firebaseUser);
       setChecking(false);
       if (firebaseUser) {
