@@ -7,7 +7,7 @@ import {
   useAudioRecorder,
 } from "expo-audio";
 import { queueAttack, syncPending } from "../services/attackQueue";
-import { useRef, useState } from "react";
+import { useRef, useState, type ComponentRef } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -56,7 +56,7 @@ export default function QuickLogScreen({
   const [voice, setVoice] = useState<VoiceState>("idle");
 
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ComponentRef<typeof ScrollView>>(null);
 
   function toggleSymptom(name: string) {
     setSymptoms((current) =>
@@ -257,7 +257,7 @@ export default function QuickLogScreen({
           </Pressable>
           <Text style={styles.privacy}>
             Your voice is sent to a speech service to be turned into text. The
-            recording isn't saved to your Halo account.
+            recording isn't saved to your halo account.
           </Text>
 
           <View style={{ marginTop: 20 }}>

@@ -31,9 +31,9 @@ export default function AboutScreen({ navigation }: ScreenProps<"About">) {
           style={styles.logo}
           resizeMode="contain"
         />
-        <Text style={styles.title}>About Halo</Text>
+        <Text style={styles.title}>About halo</Text>
         <Text style={styles.body}>
-          Halo is a migraine care companion. Log an attack in a few taps or by
+          halo is a migraine care companion. Log an attack in a few taps or by
           voice, and keep a list of the medications you take. It works with or
           without internet and syncs to the cloud when you're back online.
         </Text>
@@ -55,7 +55,7 @@ export default function AboutScreen({ navigation }: ScreenProps<"About">) {
         </Text>
 
         <Text style={styles.disclaimer}>
-          Halo gives general information only and is not a substitute for
+          halo gives general information only and is not a substitute for
           medical advice.
         </Text>
         <Text style={styles.version}>Version 1.0</Text>

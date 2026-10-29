@@ -60,10 +60,10 @@ export default function WelcomeScreen({ navigation }: ScreenProps<"Welcome">) {
             size={20}
             color={colors.primary}
           />
-          <Text style={styles.aboutText}>About Halo</Text>
+          <Text style={styles.aboutText}>About halo</Text>
         </Pressable>
         <Text style={styles.disclaimer}>
-          Halo gives general information only and is not a substitute for
+          halo gives general information only and is not a substitute for
           medical advice.
         </Text>
       </View>
