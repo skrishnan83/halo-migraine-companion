@@ -3,6 +3,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import {
   Image,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -40,6 +41,7 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
 
   async function handleLogin() {
     if (!email.trim() || !password) {
@@ -50,9 +52,32 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
-      // Success: the app will move to Home automatically (added in the next step).
+      setFailedAttempts(0);
+      // Success: the app moves to Home automatically.
     } catch (e) {
-      setError(friendlyError((e as { code?: string }).code));
+      const code = (e as { code?: string }).code;
+      const wrongDetails =
+        code === "auth/invalid-credential" ||
+        code === "auth/user-not-found" ||
+        code === "auth/wrong-password";
+      if (wrongDetails) {
+        const next = failedAttempts + 1;
+        if (next >= 3) {
+          // 3rd failed attempt: send the person to Forgot password
+          setFailedAttempts(0);
+          setError("");
+          Alert.alert(
+            "Too many attempts",
+            "You've tried 3 times. Reset your password to continue.",
+          );
+          navigation.navigate("ForgotPassword");
+          return;
+        }
+        setFailedAttempts(next);
+        setError(`Email or password is incorrect. Attempt ${next} of 3.`);
+      } else {
+        setError(friendlyError(code));
+      }
     } finally {
       setLoading(false);
     }
@@ -78,7 +103,7 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
             resizeMode="contain"
           />
           <Text style={styles.title}>Welcome back</Text>
-          <Text style={styles.subtitle}>Log in to continue to Halo</Text>
+          <Text style={styles.subtitle}>Log in to continue to halo</Text>
 
           <FormField
             label="Email"
@@ -114,7 +139,7 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
             style={styles.linkRow}
           >
             <Text style={styles.linkText}>
-              New to Halo? <Text style={styles.link}>Create an account</Text>
+              New user? <Text style={styles.link}>Create an account</Text>
             </Text>
           </Pressable>
         </ScrollView>
