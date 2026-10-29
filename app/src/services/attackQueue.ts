@@ -46,7 +46,7 @@ async function savePending(uid: string, list: PendingAttack[]) {
 // Saves a log on the phone. Works with no internet.
 export async function queueAttack(
   uid: string,
-  data: Omit<PendingAttack, "id" | "createdAtMs">
+  data: Omit<PendingAttack, "id" | "createdAtMs">,
 ): Promise<PendingAttack> {
   const id = doc(collection(db, "users", uid, "attacks")).id; // made on the phone
   const attack: PendingAttack = { ...data, id, createdAtMs: Date.now() };
@@ -67,7 +67,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
       (error) => {
         clearTimeout(timer);
         reject(error);
-      }
+      },
     );
   });
 }
@@ -93,13 +93,13 @@ export async function syncPending(uid: string): Promise<void> {
           status: "ongoing",
           createdAt: Timestamp.fromMillis(a.createdAtMs),
         }),
-        10000
+        10000,
       );
       // Uploaded: take it off the waiting list.
       const current = await getPending(uid);
       await savePending(
         uid,
-        current.filter((x) => x.id !== a.id)
+        current.filter((x) => x.id !== a.id),
       );
     }
   } catch (e) {

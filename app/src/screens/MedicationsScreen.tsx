@@ -29,7 +29,9 @@ import { colors } from "../theme/colors";
 
 type Medication = { id: string; name: string; dose: string };
 
-export default function MedicationsScreen({ navigation }: ScreenProps<"Medications">) {
+export default function MedicationsScreen({
+  navigation,
+}: ScreenProps<"Medications">) {
   const [meds, setMeds] = useState<Medication[]>([]);
   const [name, setName] = useState("");
   const [dose, setDose] = useState("");
@@ -40,15 +42,21 @@ export default function MedicationsScreen({ navigation }: ScreenProps<"Medicatio
   useEffect(() => {
     const uid = auth.currentUser?.uid;
     if (!uid) return;
-    const q = query(collection(db, "users", uid, "medications"), orderBy("name"));
+    const q = query(
+      collection(db, "users", uid, "medications"),
+      orderBy("name"),
+    );
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
         setMeds(
-          snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Medication, "id">) }))
+          snapshot.docs.map((d) => ({
+            id: d.id,
+            ...(d.data() as Omit<Medication, "id">),
+          })),
         );
       },
-      (e) => console.warn("Could not load medications", e)
+      (e) => console.warn("Could not load medications", e),
     );
     return unsubscribe;
   }, []);
@@ -79,17 +87,21 @@ export default function MedicationsScreen({ navigation }: ScreenProps<"Medicatio
   }
 
   function confirmRemove(med: Medication) {
-    Alert.alert("Remove medication?", `${med.name} will be removed from your list.`, [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Remove",
-        style: "destructive",
-        onPress: () => {
-          const uid = auth.currentUser?.uid;
-          if (uid) deleteDoc(doc(db, "users", uid, "medications", med.id));
+    Alert.alert(
+      "Remove medication?",
+      `${med.name} will be removed from your list.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Remove",
+          style: "destructive",
+          onPress: () => {
+            const uid = auth.currentUser?.uid;
+            if (uid) deleteDoc(doc(db, "users", uid, "medications", med.id));
+          },
         },
-      },
-    ]);
+      ],
+    );
   }
 
   return (
@@ -124,7 +136,11 @@ export default function MedicationsScreen({ navigation }: ScreenProps<"Medicatio
                   placeholder="e.g. 50 mg"
                 />
                 {error ? <Text style={styles.error}>{error}</Text> : null}
-                <Button title="Add medication" onPress={handleAdd} loading={saving} />
+                <Button
+                  title="Add medication"
+                  onPress={handleAdd}
+                  loading={saving}
+                />
               </View>
 
               <Text style={styles.section}>Your list</Text>
@@ -139,7 +155,9 @@ export default function MedicationsScreen({ navigation }: ScreenProps<"Medicatio
             <View style={styles.card}>
               <View style={styles.cardBody}>
                 <Text style={styles.cardName}>{item.name}</Text>
-                {item.dose ? <Text style={styles.cardDose}>{item.dose}</Text> : null}
+                {item.dose ? (
+                  <Text style={styles.cardDose}>{item.dose}</Text>
+                ) : null}
               </View>
               <Pressable onPress={() => confirmRemove(item)} hitSlop={10}>
                 <Text style={styles.remove}>Remove</Text>
@@ -157,10 +175,22 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   container: { paddingHorizontal: 28, paddingBottom: 40 },
   back: { fontSize: 16, color: colors.muted, marginTop: 8 },
-  title: { fontSize: 28, fontWeight: "700", color: colors.primary, marginTop: 16, marginBottom: 20 },
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: colors.primary,
+    marginTop: 16,
+    marginBottom: 20,
+  },
   form: { marginBottom: 8 },
   error: { color: colors.danger, fontSize: 14, marginBottom: 4 },
-  section: { fontSize: 15, fontWeight: "600", color: colors.textDark, marginTop: 28, marginBottom: 12 },
+  section: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: colors.textDark,
+    marginTop: 28,
+    marginBottom: 12,
+  },
   empty: { fontSize: 14.5, color: colors.muted, lineHeight: 21 },
   card: {
     flexDirection: "row",

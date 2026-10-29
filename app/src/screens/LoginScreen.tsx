@@ -64,7 +64,10 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
         style={styles.flex}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+        >
           <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
             <Text style={styles.back}>‹ Back</Text>
           </Pressable>
@@ -95,7 +98,10 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
             secureTextEntry
           />
 
-                    <Pressable onPress={() => navigation.navigate("ForgotPassword")} style={styles.forgot}>
+          <Pressable
+            onPress={() => navigation.navigate("ForgotPassword")}
+            style={styles.forgot}
+          >
             <Text style={styles.link}>Forgot password?</Text>
           </Pressable>
 
@@ -103,7 +109,10 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
 
           <Button title="Log In" onPress={handleLogin} loading={loading} />
 
-          <Pressable onPress={() => navigation.navigate("Signup")} style={styles.linkRow}>
+          <Pressable
+            onPress={() => navigation.navigate("Signup")}
+            style={styles.linkRow}
+          >
             <Text style={styles.linkText}>
               New to Halo? <Text style={styles.link}>Create an account</Text>
             </Text>
@@ -135,7 +144,7 @@ const styles = StyleSheet.create({
     marginBottom: 28,
   },
   error: { color: colors.danger, fontSize: 14, marginBottom: 4 },
-    forgot: { alignSelf: "flex-end", marginTop: -4, marginBottom: 14 },
+  forgot: { alignSelf: "flex-end", marginTop: -4, marginBottom: 14 },
   linkRow: { marginTop: 22, alignItems: "center" },
   linkText: { fontSize: 15, color: colors.muted },
   link: { color: colors.accent, fontWeight: "600" },

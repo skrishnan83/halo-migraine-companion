@@ -2,9 +2,22 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import { signOut } from "firebase/auth";
-import { collection, limit, onSnapshot, orderBy, query } from "firebase/firestore";
+import {
+  collection,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FlatList, Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import type { ScreenProps } from "../navigation/types";
@@ -42,7 +55,8 @@ function formatWhen(ms: number): string {
   yesterday.setDate(now.getDate() - 1);
   const time = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   if (d.toDateString() === now.toDateString()) return `Today, ${time}`;
-  if (d.toDateString() === yesterday.toDateString()) return `Yesterday, ${time}`;
+  if (d.toDateString() === yesterday.toDateString())
+    return `Yesterday, ${time}`;
   return `${d.toLocaleDateString([], { month: "short", day: "numeric" })}, ${time}`;
 }
 
@@ -57,7 +71,8 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
     if (!uid) return;
     AsyncStorage.getItem(cacheKey(uid))
       .then((raw) => {
-        if (raw) setRemote((current) => (current.length ? current : JSON.parse(raw)));
+        if (raw)
+          setRemote((current) => (current.length ? current : JSON.parse(raw)));
       })
       .catch(() => {});
   }, [uid]);
@@ -68,7 +83,7 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
     const q = query(
       collection(db, "users", uid, "attacks"),
       orderBy("startedAt", "desc"),
-      limit(10)
+      limit(10),
     );
     const unsubscribe = onSnapshot(
       q,
@@ -87,10 +102,12 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
         });
         setRemote(items);
         if (!snapshot.metadata.fromCache) {
-          AsyncStorage.setItem(cacheKey(uid), JSON.stringify(items)).catch(() => {});
+          AsyncStorage.setItem(cacheKey(uid), JSON.stringify(items)).catch(
+            () => {},
+          );
         }
       },
-      (e) => console.warn("Could not load attacks", e)
+      (e) => console.warn("Could not load attacks", e),
     );
     return unsubscribe;
   }, [uid]);
@@ -106,7 +123,8 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
     const stopListening = onPendingChange(loadPending);
     syncPending(uid);
     const stopNet = NetInfo.addEventListener((state) => {
-      const isOnline = !!state.isConnected && state.isInternetReachable !== false;
+      const isOnline =
+        !!state.isConnected && state.isInternetReachable !== false;
       setOnline(isOnline);
       if (isOnline) syncPending(uid);
     });
@@ -128,7 +146,9 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
         symptoms: p.symptoms,
         pending: true,
       }));
-    return [...waiting, ...remote].sort((a, b) => b.startedAtMs - a.startedAtMs).slice(0, 10);
+    return [...waiting, ...remote]
+      .sort((a, b) => b.startedAtMs - a.startedAtMs)
+      .slice(0, 10);
   }, [remote, pending]);
 
   const waitingCount = items.filter((i) => i.pending).length;
@@ -155,7 +175,10 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
       </View>
 
       <View style={styles.actions}>
-        <Button title="Log a migraine" onPress={() => navigation.navigate("QuickLog")} />
+        <Button
+          title="Log a migraine"
+          onPress={() => navigation.navigate("QuickLog")}
+        />
         <Button
           title="My medications"
           variant="secondary"
@@ -194,7 +217,9 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
                 {item.pending ? "  ·  Waiting to sync" : ""}
               </Text>
               <Text style={styles.cardSymptoms} numberOfLines={2}>
-                {item.symptoms.length > 0 ? item.symptoms.join(", ") : "No symptoms noted"}
+                {item.symptoms.length > 0
+                  ? item.symptoms.join(", ")
+                  : "No symptoms noted"}
               </Text>
             </View>
           </View>
@@ -216,7 +241,12 @@ const styles = StyleSheet.create({
   hero: { alignItems: "center", marginTop: 36, marginBottom: 32 },
   logo: { width: 76, height: 76 },
   greeting: { fontSize: 15, color: colors.muted, marginTop: 16 },
-  title: { fontSize: 27, fontWeight: "700", color: colors.primary, marginTop: 4 },
+  title: {
+    fontSize: 27,
+    fontWeight: "700",
+    color: colors.primary,
+    marginTop: 4,
+  },
   actions: { marginBottom: 8 },
   sectionRow: {
     flexDirection: "row",
@@ -226,7 +256,12 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   section: { fontSize: 15, fontWeight: "600", color: colors.textDark },
-  status: { flexDirection: "row", alignItems: "center", flexShrink: 1, marginLeft: 12 },
+  status: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexShrink: 1,
+    marginLeft: 12,
+  },
   statusDot: { width: 8, height: 8, borderRadius: 4, marginRight: 6 },
   statusText: { fontSize: 12.5, color: colors.muted, flexShrink: 1 },
   list: { flex: 1 },
@@ -236,7 +271,12 @@ const styles = StyleSheet.create({
     paddingVertical: 28,
     paddingHorizontal: 22,
   },
-  emptyText: { fontSize: 14.5, color: colors.muted, lineHeight: 21, textAlign: "center" },
+  emptyText: {
+    fontSize: 14.5,
+    color: colors.muted,
+    lineHeight: 21,
+    textAlign: "center",
+  },
   card: {
     flexDirection: "row",
     alignItems: "center",
@@ -256,7 +296,12 @@ const styles = StyleSheet.create({
   badgeText: { color: colors.white, fontSize: 17, fontWeight: "700" },
   cardBody: { marginLeft: 14, flex: 1 },
   cardWhen: { fontSize: 15, fontWeight: "600", color: colors.textDark },
-  cardSymptoms: { fontSize: 13.5, color: colors.muted, marginTop: 3, lineHeight: 19 },
+  cardSymptoms: {
+    fontSize: 13.5,
+    color: colors.muted,
+    marginTop: 3,
+    lineHeight: 19,
+  },
   footer: { alignItems: "center", paddingTop: 12, paddingBottom: 16 },
   email: { fontSize: 12.5, color: colors.muted, marginBottom: 8 },
   logoutText: { fontSize: 15, fontWeight: "600", color: colors.primary },

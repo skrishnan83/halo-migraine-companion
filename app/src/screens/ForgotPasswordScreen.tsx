@@ -18,7 +18,9 @@ import type { ScreenProps } from "../navigation/types";
 import { auth } from "../services/firebase";
 import { colors } from "../theme/colors";
 
-export default function ForgotPasswordScreen({ navigation }: ScreenProps<"ForgotPassword">) {
+export default function ForgotPasswordScreen({
+  navigation,
+}: ScreenProps<"ForgotPassword">) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
@@ -55,7 +57,10 @@ export default function ForgotPasswordScreen({ navigation }: ScreenProps<"Forgot
         style={styles.flex}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+        >
           <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
             <Text style={styles.back}>‹ Back</Text>
           </Pressable>
@@ -74,8 +79,9 @@ export default function ForgotPasswordScreen({ navigation }: ScreenProps<"Forgot
             <View style={styles.success}>
               <Text style={styles.successTitle}>Check your inbox</Text>
               <Text style={styles.successText}>
-                If an account exists for that email, a reset link is on its way. Open it, choose a
-                new password, then come back and log in. Check your spam folder too.
+                If an account exists for that email, a reset link is on its way.
+                Open it, choose a new password, then come back and log in. Check
+                your spam folder too.
               </Text>
             </View>
           ) : (
@@ -90,7 +96,11 @@ export default function ForgotPasswordScreen({ navigation }: ScreenProps<"Forgot
                 keyboardType="email-address"
               />
               {error ? <Text style={styles.error}>{error}</Text> : null}
-              <Button title="Send Reset Link" onPress={handleReset} loading={loading} />
+              <Button
+                title="Send Reset Link"
+                onPress={handleReset}
+                loading={loading}
+              />
             </>
           )}
 
@@ -133,6 +143,11 @@ const styles = StyleSheet.create({
     padding: 18,
     marginBottom: 8,
   },
-  successTitle: { fontSize: 17, fontWeight: "700", color: colors.primary, marginBottom: 6 },
+  successTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: colors.primary,
+    marginBottom: 6,
+  },
   successText: { fontSize: 14.5, color: colors.textDark, lineHeight: 21 },
 });

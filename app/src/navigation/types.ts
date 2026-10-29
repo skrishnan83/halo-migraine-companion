@@ -5,16 +5,13 @@ export type RootStackParamList = {
   Splash: undefined;
   Welcome: undefined;
   About: undefined;
+  Login: undefined;
   Signup: undefined;
   ForgotPassword: undefined;
   Home: undefined;
-    QuickLog: undefined;
+  QuickLog: undefined;
   Medications: undefined;
 };
-  Signup: undefined;
-};
 
-export type ScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<
-  RootStackParamList,
-  T
->;
+export type ScreenProps<T extends keyof RootStackParamList> =
+  NativeStackScreenProps<RootStackParamList, T>;

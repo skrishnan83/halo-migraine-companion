@@ -12,7 +12,11 @@ export default function SplashScreen({ navigation }: ScreenProps<"Splash">) {
 
   return (
     <View style={styles.container}>
-      <Image source={require("../../assets/icon-mark.png")} style={styles.logo} resizeMode="contain" />
+      <Image
+        source={require("../../assets/icon-mark.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
       <Text style={styles.title}>halo</Text>
       <Text style={styles.tagline}>MIGRAINE CARE COMPANION</Text>
     </View>
@@ -20,11 +24,24 @@ export default function SplashScreen({ navigation }: ScreenProps<"Splash">) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.white, alignItems: "center", justifyContent: "center" },
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   logo: { width: 185, height: 185 },
   title: {
-    fontSize: 46, fontWeight: "700", color: colors.primary, marginTop: 4,
+    fontSize: 46,
+    fontWeight: "700",
+    color: colors.primary,
+    marginTop: 4,
     fontFamily: Platform.select({ ios: "Georgia", default: "serif" }),
   },
-  tagline: { fontSize: 12, letterSpacing: 2.5, color: colors.muted, marginTop: 6 },
+  tagline: {
+    fontSize: 12,
+    letterSpacing: 2.5,
+    color: colors.muted,
+    marginTop: 6,
+  },
 });

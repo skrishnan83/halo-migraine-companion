@@ -9,7 +9,12 @@ type Props = {
   loading?: boolean;
 };
 
-export default function Button({ title, onPress, variant = "primary", loading = false }: Props) {
+export default function Button({
+  title,
+  onPress,
+  variant = "primary",
+  loading = false,
+}: Props) {
   const isPrimary = variant === "primary";
   return (
     <Pressable
@@ -20,7 +25,12 @@ export default function Button({ title, onPress, variant = "primary", loading = 
       {loading ? (
         <ActivityIndicator color={isPrimary ? colors.white : colors.primary} />
       ) : (
-        <Text style={[styles.text, { color: isPrimary ? colors.white : colors.primary }]}>
+        <Text
+          style={[
+            styles.text,
+            { color: isPrimary ? colors.white : colors.primary },
+          ]}
+        >
           {title}
         </Text>
       )}

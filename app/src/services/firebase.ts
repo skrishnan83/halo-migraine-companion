@@ -24,12 +24,16 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 function createAuth(): FirebaseAuth.Auth {
   const getRNPersistence = (
     FirebaseAuth as unknown as {
-      getReactNativePersistence?: (s: typeof AsyncStorage) => FirebaseAuth.Persistence;
+      getReactNativePersistence?: (
+        s: typeof AsyncStorage,
+      ) => FirebaseAuth.Persistence;
     }
   ).getReactNativePersistence;
   try {
     if (getRNPersistence) {
-      return FirebaseAuth.initializeAuth(app, { persistence: getRNPersistence(AsyncStorage) });
+      return FirebaseAuth.initializeAuth(app, {
+        persistence: getRNPersistence(AsyncStorage),
+      });
     }
   } catch {
     // Already started (happens when the app reloads), so use the existing one.

@@ -1,6 +1,11 @@
 // QUICK LOG: record a migraine in a few taps (or by voice). Saved to Firestore under the user.
 import { Ionicons } from "@expo/vector-icons";
-import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioRecorder } from "expo-audio";
+import {
+  AudioModule,
+  RecordingPresets,
+  setAudioModeAsync,
+  useAudioRecorder,
+} from "expo-audio";
 import { queueAttack, syncPending } from "../services/attackQueue";
 import { useRef, useState } from "react";
 import {
@@ -39,7 +44,9 @@ const SYMPTOMS = [
 
 type VoiceState = "idle" | "recording" | "transcribing";
 
-export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) {
+export default function QuickLogScreen({
+  navigation,
+}: ScreenProps<"QuickLog">) {
   const [severity, setSeverity] = useState<number | null>(null);
   const [minutesAgo, setMinutesAgo] = useState(0);
   const [symptoms, setSymptoms] = useState<string[]>([]);
@@ -49,11 +56,13 @@ export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) 
   const [voice, setVoice] = useState<VoiceState>("idle");
 
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-    const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollView>(null);
 
   function toggleSymptom(name: string) {
     setSymptoms((current) =>
-      current.includes(name) ? current.filter((s) => s !== name) : [...current, name]
+      current.includes(name)
+        ? current.filter((s) => s !== name)
+        : [...current, name],
     );
   }
 
@@ -62,10 +71,15 @@ export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) 
     try {
       const permission = await AudioModule.requestRecordingPermissionsAsync();
       if (!permission.granted) {
-        setError("Microphone access is off. Turn it on for Expo Go in your phone's Settings.");
+        setError(
+          "Microphone access is off. Turn it on for Expo Go in your phone's Settings.",
+        );
         return;
       }
-      await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
+      await setAudioModeAsync({
+        allowsRecording: true,
+        playsInSilentMode: true,
+      });
       await recorder.prepareToRecordAsync();
       recorder.record();
       setVoice("recording");
@@ -90,7 +104,9 @@ export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) 
       }
     } catch (e) {
       console.warn("Voice entry failed", e);
-      setError("Couldn't turn your voice into text. Check your connection and try again.");
+      setError(
+        "Couldn't turn your voice into text. Check your connection and try again.",
+      );
     } finally {
       await setAudioModeAsync({ allowsRecording: false }).catch(() => {});
       setVoice("idle");
@@ -110,7 +126,7 @@ export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) 
     }
     setError("");
     setSaving(true);
-        try {
+    try {
       await queueAttack(uid, {
         severity,
         startedAtMs: Date.now() - minutesAgo * 60000,
@@ -149,9 +165,17 @@ export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) 
               <Pressable
                 key={n}
                 onPress={() => setSeverity(n)}
-                style={[styles.severityBtn, severity === n && styles.severityBtnOn]}
+                style={[
+                  styles.severityBtn,
+                  severity === n && styles.severityBtnOn,
+                ]}
               >
-                <Text style={[styles.severityText, severity === n && styles.severityTextOn]}>
+                <Text
+                  style={[
+                    styles.severityText,
+                    severity === n && styles.severityTextOn,
+                  ]}
+                >
                   {n}
                 </Text>
               </Pressable>
@@ -168,9 +192,17 @@ export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) 
               <Pressable
                 key={o.label}
                 onPress={() => setMinutesAgo(o.minutesAgo)}
-                style={[styles.chip, minutesAgo === o.minutesAgo && styles.chipOn]}
+                style={[
+                  styles.chip,
+                  minutesAgo === o.minutesAgo && styles.chipOn,
+                ]}
               >
-                <Text style={[styles.chipText, minutesAgo === o.minutesAgo && styles.chipTextOn]}>
+                <Text
+                  style={[
+                    styles.chipText,
+                    minutesAgo === o.minutesAgo && styles.chipTextOn,
+                  ]}
+                >
                   {o.label}
                 </Text>
               </Pressable>
@@ -187,7 +219,9 @@ export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) 
                   onPress={() => toggleSymptom(s)}
                   style={[styles.chip, on && styles.chipOn]}
                 >
-                  <Text style={[styles.chipText, on && styles.chipTextOn]}>{s}</Text>
+                  <Text style={[styles.chipText, on && styles.chipTextOn]}>
+                    {s}
+                  </Text>
                 </Pressable>
               );
             })}
@@ -203,20 +237,27 @@ export default function QuickLogScreen({ navigation }: ScreenProps<"QuickLog">) 
               <ActivityIndicator color={colors.primary} />
             ) : (
               <Ionicons
-                name={voice === "recording" ? "stop-circle-outline" : "mic-outline"}
+                name={
+                  voice === "recording" ? "stop-circle-outline" : "mic-outline"
+                }
                 size={22}
                 color={voice === "recording" ? colors.white : colors.primary}
               />
             )}
-            <Text style={[styles.micText, voice === "recording" && styles.micTextOn]}>
+            <Text
+              style={[
+                styles.micText,
+                voice === "recording" && styles.micTextOn,
+              ]}
+            >
               {voice === "idle" && "Tap to speak"}
               {voice === "recording" && "Listening... tap to stop"}
               {voice === "transcribing" && "Turning your voice into text..."}
             </Text>
           </Pressable>
           <Text style={styles.privacy}>
-            Your voice is sent to a speech service to be turned into text. The recording isn't
-            saved to your Halo account.
+            Your voice is sent to a speech service to be turned into text. The
+            recording isn't saved to your Halo account.
           </Text>
 
           <View style={{ marginTop: 20 }}>
@@ -243,9 +284,24 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   container: { paddingHorizontal: 28, paddingBottom: 40 },
   back: { fontSize: 16, color: colors.muted, marginTop: 8 },
-  title: { fontSize: 28, fontWeight: "700", color: colors.primary, marginTop: 16 },
-  section: { fontSize: 15, fontWeight: "600", color: colors.textDark, marginTop: 26, marginBottom: 12 },
-  severityGrid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: colors.primary,
+    marginTop: 16,
+  },
+  section: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: colors.textDark,
+    marginTop: 26,
+    marginBottom: 12,
+  },
+  severityGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
   severityBtn: {
     width: "18%",
     height: 52,
@@ -282,7 +338,12 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   micBtnOn: { backgroundColor: colors.accent, borderColor: colors.accent },
-  micText: { fontSize: 15.5, fontWeight: "600", color: colors.primary, marginLeft: 10 },
+  micText: {
+    fontSize: 15.5,
+    fontWeight: "600",
+    color: colors.primary,
+    marginLeft: 10,
+  },
   micTextOn: { color: colors.white },
   privacy: { fontSize: 12, color: colors.muted, lineHeight: 17, marginTop: 8 },
   error: { color: colors.danger, fontSize: 14, marginBottom: 4 },

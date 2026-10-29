@@ -13,6 +13,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import FormField from "../components/FormField";
+import PasswordChecklist from "../components/PasswordChecklist";
+import { checkPassword, MIN_PASSWORD_LENGTH } from "../utils/passwordRules";
 import type { ScreenProps } from "../navigation/types";
 import { auth } from "../services/firebase";
 import { colors } from "../theme/colors";
@@ -44,8 +46,8 @@ export default function SignupScreen({ navigation }: ScreenProps<"Signup">) {
       setError("Please fill in all the boxes.");
       return;
     }
-    if (password.length < 8) {
-      setError("Your password needs at least 8 characters.");
+    if (!checkPassword(password).isValid) {
+      setError("Your password doesn't meet all the requirements below.");
       return;
     }
     if (password !== confirm) {
@@ -70,7 +72,10 @@ export default function SignupScreen({ navigation }: ScreenProps<"Signup">) {
         style={styles.flex}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+        >
           <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
             <Text style={styles.back}>‹ Back</Text>
           </Pressable>
@@ -96,10 +101,11 @@ export default function SignupScreen({ navigation }: ScreenProps<"Signup">) {
             label="Password"
             value={password}
             onChangeText={setPassword}
-            placeholder="At least 8 characters"
+            placeholder={`At least ${MIN_PASSWORD_LENGTH} characters`}
             autoCapitalize="none"
             secureTextEntry
           />
+          <PasswordChecklist password={password} />
           <FormField
             label="Confirm password"
             value={confirm}
@@ -111,9 +117,16 @@ export default function SignupScreen({ navigation }: ScreenProps<"Signup">) {
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          <Button title="Create Account" onPress={handleSignup} loading={loading} />
+          <Button
+            title="Create Account"
+            onPress={handleSignup}
+            loading={loading}
+          />
 
-          <Pressable onPress={() => navigation.navigate("Login")} style={styles.linkRow}>
+          <Pressable
+            onPress={() => navigation.navigate("Login")}
+            style={styles.linkRow}
+          >
             <Text style={styles.linkText}>
               Already have an account? <Text style={styles.link}>Log in</Text>
             </Text>

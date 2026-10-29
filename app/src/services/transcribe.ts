@@ -24,7 +24,9 @@ export async function transcribeAudio(uri: string): Promise<string> {
 
   if (!response.ok) {
     const detail = await response.text();
-    throw new Error(`Transcription failed (${response.status}): ${detail.slice(0, 300)}`);
+    throw new Error(
+      `Transcription failed (${response.status}): ${detail.slice(0, 300)}`,
+    );
   }
   const data = (await response.json()) as { text?: string };
   return (data.text ?? "").trim();
