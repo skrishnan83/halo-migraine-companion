@@ -2,7 +2,6 @@
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { useState } from "react";
 import {
-  Image,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -10,10 +9,12 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import FormField from "../components/FormField";
+import HaloLogo from "../components/HaloLogo";
 import PasswordChecklist from "../components/PasswordChecklist";
 import { checkPassword, MIN_PASSWORD_LENGTH } from "../utils/passwordRules";
 import type { ScreenProps } from "../navigation/types";
@@ -87,11 +88,9 @@ export default function SignupScreen({ navigation }: ScreenProps<"Signup">) {
             <Text style={styles.back}>‹ Back</Text>
           </Pressable>
 
-          <Image
-            source={require("../../assets/icon-mark.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          <View style={styles.logo}>
+            <HaloLogo size={40} />
+          </View>
           <Text style={styles.title}>Create your account</Text>
           <Text style={styles.subtitle}>It only takes a moment</Text>
 
@@ -149,7 +148,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   container: { paddingHorizontal: 28, paddingBottom: 32 },
   back: { fontSize: 16, color: colors.muted, marginTop: 8 },
-  logo: { width: 72, height: 72, alignSelf: "center", marginTop: 24 },
+  logo: { alignSelf: "center", marginTop: 24 },
   title: {
     fontSize: 28,
     fontWeight: "700",

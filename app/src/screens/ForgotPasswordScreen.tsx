@@ -2,7 +2,6 @@
 import { sendPasswordResetEmail } from "firebase/auth";
 import { useState } from "react";
 import {
-  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -13,6 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
+import HaloLogo from "../components/HaloLogo";
 import FormField from "../components/FormField";
 import type { ScreenProps } from "../navigation/types";
 import { auth } from "../services/firebase";
@@ -65,11 +65,9 @@ export default function ForgotPasswordScreen({
             <Text style={styles.back}>‹ Back</Text>
           </Pressable>
 
-          <Image
-            source={require("../../assets/icon-mark.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          <View style={styles.logo}>
+            <HaloLogo size={40} />
+          </View>
           <Text style={styles.title}>Reset your password</Text>
           <Text style={styles.subtitle}>
             Enter your email and we'll send you a link to choose a new one.
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   container: { paddingHorizontal: 28, paddingBottom: 32 },
   back: { fontSize: 16, color: colors.muted, marginTop: 8 },
-  logo: { width: 72, height: 72, alignSelf: "center", marginTop: 24 },
+  logo: { alignSelf: "center", marginTop: 24 },
   title: {
     fontSize: 26,
     fontWeight: "700",

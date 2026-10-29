@@ -10,16 +10,10 @@ import {
   query,
 } from "firebase/firestore";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  FlatList,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
+import HaloLogo from "../components/HaloLogo";
 import type { ScreenProps } from "../navigation/types";
 import {
   getPending,
@@ -165,11 +159,9 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.hero}>
-        <Image
-          source={require("../../assets/icon-mark.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <View style={styles.logo}>
+          <HaloLogo size={36} />
+        </View>
         <Text style={styles.greeting}>{greeting()}</Text>
         <Text style={styles.title}>How are you feeling?</Text>
       </View>
@@ -239,7 +231,7 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.white, paddingHorizontal: 28 },
   hero: { alignItems: "center", marginTop: 36, marginBottom: 32 },
-  logo: { width: 76, height: 76 },
+  logo: { alignSelf: "center" },
   greeting: { fontSize: 15, color: colors.muted, marginTop: 16 },
   title: {
     fontSize: 27,

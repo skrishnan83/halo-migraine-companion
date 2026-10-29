@@ -1,15 +1,9 @@
-// WELCOME: Log in, create an account, or read About Halo.
+// WELCOME: Log in, create an account, or read About halo.
 import { Ionicons } from "@expo/vector-icons";
-import {
-  Image,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
+import HaloLogo from "../components/HaloLogo";
 import type { ScreenProps } from "../navigation/types";
 import { colors } from "../theme/colors";
 
@@ -23,12 +17,7 @@ export default function WelcomeScreen({ navigation }: ScreenProps<"Welcome">) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.top}>
-        <Image
-          source={require("../../assets/icon-mark.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <Text style={styles.title}>halo</Text>
+        <HaloLogo size={64} />
         <Text style={styles.tagline}>MIGRAINE CARE COMPANION</Text>
 
         <View style={styles.features}>
@@ -74,19 +63,12 @@ export default function WelcomeScreen({ navigation }: ScreenProps<"Welcome">) {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.white, paddingHorizontal: 28 },
   top: { flex: 1, alignItems: "center", justifyContent: "center" },
-  logo: { width: 185, height: 185 },
-  title: {
-    fontSize: 46,
-    fontWeight: "700",
-    color: colors.primary,
-    marginTop: 4,
-    fontFamily: Platform.select({ ios: "Georgia", default: "serif" }),
-  },
   tagline: {
-    fontSize: 12,
-    letterSpacing: 2.5,
-    color: colors.muted,
-    marginTop: 6,
+    fontSize: 13,
+    fontWeight: "700",
+    letterSpacing: 2,
+    color: "#4F6466",
+    marginTop: 4,
   },
   features: { flexDirection: "row", alignSelf: "stretch", marginTop: 36 },
   feature: { flex: 1, alignItems: "center", paddingHorizontal: 6 },

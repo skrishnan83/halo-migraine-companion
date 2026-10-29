@@ -1,15 +1,9 @@
-// ABOUT: what Halo is and what it does. Information only.
+// ABOUT: what halo is and what it does. Information only.
 import { Ionicons } from "@expo/vector-icons";
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { ScreenProps } from "../navigation/types";
+import HaloLogo from "../components/HaloLogo";
 import { colors } from "../theme/colors";
 
 const FEATURES: { icon: keyof typeof Ionicons.glyphMap; label: string }[] = [
@@ -26,11 +20,9 @@ export default function AboutScreen({ navigation }: ScreenProps<"About">) {
           <Text style={styles.back}>‹ Back</Text>
         </Pressable>
 
-        <Image
-          source={require("../../assets/icon-mark.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <View style={styles.logo}>
+          <HaloLogo size={40} />
+        </View>
         <Text style={styles.title}>About halo</Text>
         <Text style={styles.body}>
           halo is a migraine care companion. Log an attack in a few taps or by
@@ -68,7 +60,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.white },
   container: { paddingHorizontal: 28, paddingBottom: 28 },
   back: { fontSize: 16, color: colors.muted, marginTop: 8 },
-  logo: { width: 96, height: 96, alignSelf: "center", marginTop: 16 },
+  logo: { alignSelf: "center", marginTop: 16 },
   title: {
     fontSize: 28,
     fontWeight: "700",

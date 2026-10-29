@@ -2,7 +2,6 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import {
-  Image,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -10,13 +9,18 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import FormField from "../components/FormField";
+import HaloLogo from "../components/HaloLogo";
 import type { ScreenProps } from "../navigation/types";
 import { auth } from "../services/firebase";
 import { colors } from "../theme/colors";
+
+// After this many failed tries in a row, the app opens Forgot password.
+const MAX_ATTEMPTS = 3;
 
 // Turns Firebase's technical error codes into plain English.
 function friendlyError(code?: string): string {
@@ -62,8 +66,7 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
         code === "auth/wrong-password";
       if (wrongDetails) {
         const next = failedAttempts + 1;
-        if (next >= 3) {
-          // 3rd failed attempt: send the person to Forgot password
+        if (next >= MAX_ATTEMPTS) {
           setFailedAttempts(0);
           setError("");
           Alert.alert(
@@ -74,7 +77,9 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
           return;
         }
         setFailedAttempts(next);
-        setError(`Email or password is incorrect. Attempt ${next} of 3.`);
+        setError(
+          `Email or password is incorrect. Attempt ${next} of ${MAX_ATTEMPTS}.`,
+        );
       } else {
         setError(friendlyError(code));
       }
@@ -97,11 +102,9 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
             <Text style={styles.back}>‹ Back</Text>
           </Pressable>
 
-          <Image
-            source={require("../../assets/icon-mark.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          <View style={styles.logo}>
+            <HaloLogo size={40} />
+          </View>
           <Text style={styles.title}>Welcome back</Text>
           <Text style={styles.subtitle}>Log in to continue to halo</Text>
 
@@ -153,7 +156,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   container: { paddingHorizontal: 28, paddingBottom: 32 },
   back: { fontSize: 16, color: colors.muted, marginTop: 8 },
-  logo: { width: 72, height: 72, alignSelf: "center", marginTop: 24 },
+  logo: { alignSelf: "center", marginTop: 24 },
   title: {
     fontSize: 28,
     fontWeight: "700",
