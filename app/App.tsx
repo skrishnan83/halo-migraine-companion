@@ -20,6 +20,8 @@ import QuickLogScreen from "./src/screens/QuickLogScreen";
 import MedicationsScreen from "./src/screens/MedicationsScreen";
 import AboutScreen from "./src/screens/AboutScreen";
 import SplashScreen from "./src/screens/SplashScreen";
+import ReliefScreen from "./src/screens/ReliefScreen";
+import HistoryScreen from "./src/screens/HistoryScreen";
 import { signupState } from "./src/utils/signupState";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -62,6 +64,8 @@ export default function App() {
               <Stack.Screen name="Home" component={HomeScreen} />
               <Stack.Screen name="QuickLog" component={QuickLogScreen} />
               <Stack.Screen name="Medications" component={MedicationsScreen} />
+              <Stack.Screen name="Relief" component={ReliefScreen} />
+              <Stack.Screen name="History" component={HistoryScreen} />
             </>
           ) : (
             <>

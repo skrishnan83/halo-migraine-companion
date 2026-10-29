@@ -1,38 +1,16 @@
 // HOME: greeting, the main actions, and your recent attacks (works offline).
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import NetInfo from "@react-native-community/netinfo";
+// Tap an attack to rate how it went.
 import { signOut } from "firebase/auth";
-import {
-  collection,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-} from "firebase/firestore";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import HaloLogo from "../components/HaloLogo";
+import { useAttacks } from "../hooks/useAttacks";
 import type { ScreenProps } from "../navigation/types";
-import {
-  getPending,
-  onPendingChange,
-  syncPending,
-  type PendingAttack,
-} from "../services/attackQueue";
-import { auth, db } from "../services/firebase";
+import { auth } from "../services/firebase";
 import { colors } from "../theme/colors";
-
-type AttackItem = {
-  id: string;
-  severity: number;
-  startedAtMs: number;
-  symptoms: string[];
-  pending: boolean;
-};
-
-const cacheKey = (uid: string) => `halo.cache.${uid}`;
+import { reliefSummary } from "../utils/relief";
+import { formatWhen } from "../utils/stats";
 
 function greeting(): string {
   const hour = new Date().getHours();
@@ -41,111 +19,9 @@ function greeting(): string {
   return "Good evening";
 }
 
-// "Today, 11:51 AM", "Yesterday, 9:30 PM", or "Oct 2, 4:15 PM"
-function formatWhen(ms: number): string {
-  const d = new Date(ms);
-  const now = new Date();
-  const yesterday = new Date();
-  yesterday.setDate(now.getDate() - 1);
-  const time = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-  if (d.toDateString() === now.toDateString()) return `Today, ${time}`;
-  if (d.toDateString() === yesterday.toDateString())
-    return `Yesterday, ${time}`;
-  return `${d.toLocaleDateString([], { month: "short", day: "numeric" })}, ${time}`;
-}
-
 export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
-  const uid = auth.currentUser?.uid;
-  const [remote, setRemote] = useState<AttackItem[]>([]);
-  const [pending, setPending] = useState<PendingAttack[]>([]);
-  const [online, setOnline] = useState(true);
+  const { items, online, waitingCount } = useAttacks(10);
 
-  // 1. Show the last saved list straight away, even with no internet.
-  useEffect(() => {
-    if (!uid) return;
-    AsyncStorage.getItem(cacheKey(uid))
-      .then((raw) => {
-        if (raw)
-          setRemote((current) => (current.length ? current : JSON.parse(raw)));
-      })
-      .catch(() => {});
-  }, [uid]);
-
-  // 2. Live updates from the cloud.
-  useEffect(() => {
-    if (!uid) return;
-    const q = query(
-      collection(db, "users", uid, "attacks"),
-      orderBy("startedAt", "desc"),
-      limit(10),
-    );
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        // Offline and nothing cached by Firebase: keep showing the saved list.
-        if (snapshot.metadata.fromCache && snapshot.empty) return;
-        const items: AttackItem[] = snapshot.docs.map((d) => {
-          const data = d.data();
-          return {
-            id: d.id,
-            severity: data.severity,
-            startedAtMs: data.startedAt.toMillis(),
-            symptoms: data.symptoms ?? [],
-            pending: false,
-          };
-        });
-        setRemote(items);
-        if (!snapshot.metadata.fromCache) {
-          AsyncStorage.setItem(cacheKey(uid), JSON.stringify(items)).catch(
-            () => {},
-          );
-        }
-      },
-      (e) => console.warn("Could not load attacks", e),
-    );
-    return unsubscribe;
-  }, [uid]);
-
-  // 3. Logs waiting to upload, plus sync whenever the internet comes back.
-  const loadPending = useCallback(() => {
-    if (uid) getPending(uid).then(setPending);
-  }, [uid]);
-
-  useEffect(() => {
-    if (!uid) return;
-    loadPending();
-    const stopListening = onPendingChange(loadPending);
-    syncPending(uid);
-    const stopNet = NetInfo.addEventListener((state) => {
-      const isOnline =
-        !!state.isConnected && state.isInternetReachable !== false;
-      setOnline(isOnline);
-      if (isOnline) syncPending(uid);
-    });
-    return () => {
-      stopListening();
-      stopNet();
-    };
-  }, [uid, loadPending]);
-
-  // Cloud logs + waiting logs, newest first.
-  const items = useMemo(() => {
-    const cloudIds = new Set(remote.map((r) => r.id));
-    const waiting: AttackItem[] = pending
-      .filter((p) => !cloudIds.has(p.id))
-      .map((p) => ({
-        id: p.id,
-        severity: p.severity,
-        startedAtMs: p.startedAtMs,
-        symptoms: p.symptoms,
-        pending: true,
-      }));
-    return [...waiting, ...remote]
-      .sort((a, b) => b.startedAtMs - a.startedAtMs)
-      .slice(0, 10);
-  }, [remote, pending]);
-
-  const waitingCount = items.filter((i) => i.pending).length;
   let statusText = "All synced";
   let statusColor = colors.sage;
   if (!online) {
@@ -171,11 +47,22 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
           title="Log a migraine"
           onPress={() => navigation.navigate("QuickLog")}
         />
-        <Button
-          title="My medications"
-          variant="secondary"
-          onPress={() => navigation.navigate("Medications")}
-        />
+        <View style={styles.pair}>
+          <View style={styles.half}>
+            <Button
+              title="My medications"
+              variant="secondary"
+              onPress={() => navigation.navigate("Medications")}
+            />
+          </View>
+          <View style={styles.half}>
+            <Button
+              title="History"
+              variant="secondary"
+              onPress={() => navigation.navigate("History")}
+            />
+          </View>
+        </View>
       </View>
 
       <View style={styles.sectionRow}>
@@ -199,7 +86,17 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
           </View>
         }
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <Pressable
+            style={styles.card}
+            onPress={() =>
+              navigation.navigate("Relief", {
+                attackId: item.id,
+                severity: item.severity,
+                startedAtMs: item.startedAtMs,
+                relief: item.relief,
+              })
+            }
+          >
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{item.severity}</Text>
             </View>
@@ -208,13 +105,20 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
                 {formatWhen(item.startedAtMs)}
                 {item.pending ? "  ·  Waiting to sync" : ""}
               </Text>
-              <Text style={styles.cardSymptoms} numberOfLines={2}>
+              <Text style={styles.cardSymptoms} numberOfLines={1}>
                 {item.symptoms.length > 0
                   ? item.symptoms.join(", ")
                   : "No symptoms noted"}
               </Text>
+              {item.relief ? (
+                <Text style={styles.relief} numberOfLines={1}>
+                  {reliefSummary(item.relief)}
+                </Text>
+              ) : (
+                <Text style={styles.rate}>Tap to rate relief ›</Text>
+              )}
             </View>
-          </View>
+          </Pressable>
         )}
       />
 
@@ -230,9 +134,9 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.white, paddingHorizontal: 28 },
-  hero: { alignItems: "center", marginTop: 36, marginBottom: 32 },
+  hero: { alignItems: "center", marginTop: 24, marginBottom: 20 },
   logo: { alignSelf: "center" },
-  greeting: { fontSize: 15, color: colors.muted, marginTop: 16 },
+  greeting: { fontSize: 15, color: colors.muted, marginTop: 12 },
   title: {
     fontSize: 27,
     fontWeight: "700",
@@ -240,11 +144,13 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   actions: { marginBottom: 8 },
+  pair: { flexDirection: "row", marginHorizontal: -5 },
+  half: { flex: 1, marginHorizontal: 5 },
   sectionRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 28,
+    marginTop: 22,
     marginBottom: 14,
   },
   section: { fontSize: 15, fontWeight: "600", color: colors.textDark },
@@ -288,11 +194,18 @@ const styles = StyleSheet.create({
   badgeText: { color: colors.white, fontSize: 17, fontWeight: "700" },
   cardBody: { marginLeft: 14, flex: 1 },
   cardWhen: { fontSize: 15, fontWeight: "600", color: colors.textDark },
-  cardSymptoms: {
+  cardSymptoms: { fontSize: 13.5, color: colors.muted, marginTop: 3 },
+  relief: {
     fontSize: 13.5,
-    color: colors.muted,
+    color: colors.primary,
+    fontWeight: "600",
     marginTop: 3,
-    lineHeight: 19,
+  },
+  rate: {
+    fontSize: 13.5,
+    color: colors.accent,
+    fontWeight: "600",
+    marginTop: 3,
   },
   footer: { alignItems: "center", paddingTop: 12, paddingBottom: 16 },
   email: { fontSize: 12.5, color: colors.muted, marginBottom: 8 },

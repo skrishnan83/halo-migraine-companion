@@ -1,5 +1,6 @@
-// The list of every screen in Halo. Add a name here when you add a screen.
+// The list of every screen in halo. Add a name here when you add a screen.
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { Relief } from "../utils/relief";
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -11,6 +12,13 @@ export type RootStackParamList = {
   Home: undefined;
   QuickLog: undefined;
   Medications: undefined;
+  Relief: {
+    attackId: string;
+    severity: number;
+    startedAtMs: number;
+    relief?: Relief;
+  };
+  History: undefined;
 };
 
 export type ScreenProps<T extends keyof RootStackParamList> =
