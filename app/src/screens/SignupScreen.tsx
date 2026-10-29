@@ -1,8 +1,9 @@
 // SIGN UP: creates a new account in Firebase Authentication.
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { useState } from "react";
 import {
   Image,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -18,6 +19,7 @@ import { checkPassword, MIN_PASSWORD_LENGTH } from "../utils/passwordRules";
 import type { ScreenProps } from "../navigation/types";
 import { auth } from "../services/firebase";
 import { colors } from "../theme/colors";
+import { signupState } from "../utils/signupState";
 
 function friendlyError(code?: string): string {
   switch (code) {
@@ -56,12 +58,17 @@ export default function SignupScreen({ navigation }: ScreenProps<"Signup">) {
     }
     setError("");
     setLoading(true);
+    signupState.creating = true;
     try {
       await createUserWithEmailAndPassword(auth, email.trim(), password);
-      // Success: the app moves to Home automatically.
+      // A new account goes to Log In, never Home: sign out, then open Log In.
+      await signOut(auth);
+      Alert.alert("Account created", "Please log in with your new account.");
+      navigation.replace("Login");
     } catch (e) {
       setError(friendlyError((e as { code?: string }).code));
     } finally {
+      signupState.creating = false;
       setLoading(false);
     }
   }
