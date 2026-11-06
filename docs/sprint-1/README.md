@@ -2,7 +2,7 @@
 
 **Sprint goal:** the front door of the app, meaning the Splash, Welcome and About halo screens, plus user accounts (Create Account, Log In, Forgot Password).
 **Result:** every planned item was built, run on a real iPhone and tested.
-**Video:** [Sprint 1 review on YouTube](YOUTUBE_LINK)
+**Video:** [Sprint 1 review on YouTube](https://youtu.be/q9u9FglU0hU)
 
 Contents:
 1. [Deliverables](#1-deliverables)
