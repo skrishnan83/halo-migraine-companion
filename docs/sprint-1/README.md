@@ -59,8 +59,6 @@ Partial = present in a limited or paid-only form.
 
 ## 3. Design diagrams (draw.io)
 
-The editable source for all diagrams is [`diagrams/halo_Sprint1_Diagrams.drawio`](diagrams/halo_Sprint1_Diagrams.drawio) (open it at [app.diagrams.net](https://app.diagrams.net)). The diagrams cover only what is built: Splash → Welcome (About halo) → Log In / Create Account / Forgot Password → Home.
-
 | Diagram | Image |
 |---|---|
 | Colour key | [0_Colour_Key.png](diagrams/0_Colour_Key.png) |
@@ -80,10 +78,8 @@ The editable source for all diagrams is [`diagrams/halo_Sprint1_Diagrams.drawio`
 
 ## 4. UI designs (Figma)
 
-- Flow of all Sprint 1 screens: [PDF](ui/halo_Sprint1_Wireframe_Flow.pdf) · [PNG](ui/halo_Sprint1_Wireframe_Flow.png) · [SVG for Figma](ui/halo_Sprint1_Wireframe_Flow.svg)
 - Each screen as PNG and SVG (drag an SVG into Figma to edit it): [`ui/screens`](ui/screens)
 
-![Sprint 1 wireframe flow](ui/halo_Sprint1_Wireframe_Flow.png)
 
 **Planned design vs what was built.** Five text cards on Welcome became three icons, because the first version looked crowded. Colours and the logo now come from the halo brand files. About halo became a link on Welcome, so logging in takes fewer taps.
 
