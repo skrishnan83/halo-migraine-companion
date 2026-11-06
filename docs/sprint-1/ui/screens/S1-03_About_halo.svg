@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="418" height="872" viewBox="0 0 418 872">
+<title>S1-03 About halo</title>
+<rect x="1" y="1" width="416" height="870" rx="46" fill="#FFFFFF" stroke="#2B2B2B" stroke-width="3"/>
+<g transform="translate(14,14)">
+<rect x="0" y="0" width="390" height="844" rx="34" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
+<text x="28.0" y="34.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#333333" text-anchor="start">9:41</text>
+<rect x="300.0" y="29.0" width="4.0" height="5.0" rx="1" fill="#333333"/>
+<rect x="306.0" y="26.0" width="4.0" height="8.0" rx="1" fill="#333333"/>
+<rect x="312.0" y="23.0" width="4.0" height="11.0" rx="1" fill="#333333"/>
+<rect x="318.0" y="20.0" width="4.0" height="14.0" rx="1" fill="#333333"/>
+<rect x="330.0" y="23.0" width="26.0" height="12.0" rx="3" fill="none" stroke="#333333" stroke-width="1.4"/>
+<rect x="333.0" y="26.0" width="17.0" height="6.0" rx="1" fill="#333333"/>
+<text x="24.0" y="78.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#6E6E6E" text-anchor="start">‹ Back</text>
+<text x="150.2" y="160.0" font-family="Georgia, serif" font-size="40" font-weight="700" fill="#2B2B2B" text-anchor="start">hal</text>
+<circle cx="224.7" cy="144.9" r="13.59" fill="none" stroke="#8A8A8A" stroke-width="3.02"/>
+<circle cx="224.7" cy="144.9" r="8.9694" fill="none" stroke="#4F4F4F" stroke-width="3.02"/>
+<text x="195.0" y="214.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#2B2B2B" text-anchor="middle">About halo</text>
+<text x="24.0" y="256.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#333333" text-anchor="start">halo is a migraine care companion. Log an attack</text>
+<text x="24.0" y="278.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#333333" text-anchor="start">in a few taps or by voice, and keep a list of the</text>
+<text x="24.0" y="300.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#333333" text-anchor="start">medications you take. It works with or without</text>
+<text x="24.0" y="322.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#333333" text-anchor="start">internet and syncs to the cloud when you're</text>
+<text x="24.0" y="344.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#333333" text-anchor="start">back online.</text>
+<circle cx="80.0" cy="418.0" r="26" fill="#EDEDED" stroke="#BDBDBD" stroke-width="1.2"/>
+<text x="80.0" y="423.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#6E6E6E" text-anchor="middle">Q</text>
+<text x="80.0" y="470.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#333333" text-anchor="middle">Quick logging</text>
+<circle cx="195.0" cy="418.0" r="26" fill="#EDEDED" stroke="#BDBDBD" stroke-width="1.2"/>
+<text x="195.0" y="423.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#6E6E6E" text-anchor="middle">V</text>
+<text x="195.0" y="470.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#333333" text-anchor="middle">Voice notes</text>
+<circle cx="310.0" cy="418.0" r="26" fill="#EDEDED" stroke="#BDBDBD" stroke-width="1.2"/>
+<text x="310.0" y="423.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#6E6E6E" text-anchor="middle">O</text>
+<text x="310.0" y="470.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#333333" text-anchor="middle">Works offline</text>
+<text x="24.0" y="530.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="400" fill="#6E6E6E" text-anchor="start" font-style="italic">Coming next: relief ratings, history and trends,</text>
+<text x="24.0" y="550.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="400" fill="#6E6E6E" text-anchor="start" font-style="italic">and a report to share with your doctor.</text>
+<text x="195.0" y="610.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#6E6E6E" text-anchor="middle">halo gives general information only and is not a</text>
+<text x="195.0" y="626.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#6E6E6E" text-anchor="middle">substitute for medical advice.</text>
+<text x="195.0" y="650.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#6E6E6E" text-anchor="middle">Version 1.0</text>
+<circle cx="100.0" cy="78.0" r="11" fill="#111111"/>
+<text x="100.0" y="82.5" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">1</text>
+</g>
+</svg>

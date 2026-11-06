@@ -1,141 +1,120 @@
-# halo-migraine-companion
+# halo — AI migraine care companion
 
-<h1 align="center">Halo</h1> <h3 align="center">An AI-powered migraine care companion</h3> <p align="center"> Log a migraine in under a minute — by voice or by tap — and learn which treatments actually work for you. </p> <p align="center">
+**halo** is a mobile app that helps people with migraine log attacks quickly, learn which treatments actually work for them, and share a clear report with their doctor. It is built with React Native (Expo), TypeScript and Firebase, by **BatWarriors LLC**.
 
+> halo gives general information only and is not a substitute for medical advice.
 
----
-
-## Project links
-
-| | |
-|---|---|
-| 🎥 **Proposal video** | https://youtu.be/Kb44Jap_8og |
-| 💼 **LinkedIn post** | https://www.linkedin.com/posts/krishnansmita_halo-ai-powered-migraine-care-companion-activity-7511157599111847936-yD9V?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAL-jvEBG3XA5cCh-Z3noyzpP1Fi4LZ61wk |
-
-
-**Team:** BatWarriors LLC — Smita Krishnan, Sai Charan Beemara (Project Manager / Team Lead)
-
-**Client/Advisor:** Dr. V. Govindaswamy
+|                       |                                                                                          |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| **Current release**   | Sprint 1: Welcome, About halo and user accounts                                          |
+| **Next**              | Sprint 2: Log a Migraine, My Medications, relief ratings, History and Trends, PDF report |
+| **Platform**          | iPhone and Android, through Expo Go (Expo SDK 58)                                        |
+| **Video walkthrough** | [Sprint 1 review on YouTube](YOUTUBE_LINK)                                               |
+| **LinkedIn**          | [Sprint 1 review on LinkedIn](LINK)                                                      |
 
 ---
 
-## Contents
+## Sprint 1 features (implemented and tested)
 
-- [The problem](#the-problem)
-- [What users of today's apps are telling us](#what-users-of-todays-apps-are-telling-us)
-- [How Halo is different](#how-halo-is-different)
-- [A day with Halo](#a-day-with-halo)
-- [Roadmap](#roadmap)
-- [Future work](#future-work)
-- [Tech stack](#tech-stack)
-- [Repository structure](#repository-structure)
-- [References](#references)
+| Feature              | What it does                                                                                                                                                                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Splash**           | Shows the halo logo for about 2.5 seconds, then opens Welcome.                                                                                                                                                                     |
+| **Welcome**          | Log In, Create Account, and an About halo link.                                                                                                                                                                                    |
+| **About halo**       | Explains what the app does today and what is coming next.                                                                                                                                                                          |
+| **Create Account**   | Email, password and confirm password. The password needs 15+ characters, an uppercase letter, a lowercase letter, a number and a special character; a live checklist ticks each rule. A new account opens **Log In** (never Home). |
+| **Log In**           | Checked by Firebase Authentication. Wrong details show "Email or password is incorrect." with the attempt number; the **3rd failed attempt opens Forgot Password**.                                                                |
+| **Forgot Password**  | Firebase emails a reset link, then the app shows **Check Your Inbox**. The same message is shown for every address, so accounts stay private.                                                                                      |
+| **Stay logged in**   | After a successful log in, halo opens straight to Home, even after the app is closed.                                                                                                                                              |
+| **Home and Log Out** | Home greets the person; Log Out returns to the splash and Welcome.                                                                                                                                                                 |
+| **Private data**     | A profile is saved in Cloud Firestore, and security rules let each person read and write only their own data.                                                                                                                      |
+
+Full Sprint 1 documentation, including diagrams, UI designs, the test log and the feedback decision log, is in [`docs/sprint-1`](docs/sprint-1/README.md).
 
 ---
-
-## The problem
-
-- More than **40 million Americans** and about **1.2 billion people worldwide** live with migraine.
-- It is the **second leading cause of disability** in the world, and there is **no cure** — only management.
-- Doctors recommend keeping a headache diary, but popular apps make logging slow during an attack, ask whether a medication worked before you can know, and leave you to work out what's actually helping.
-
-## What users of today's apps are telling us
-
-We studied real App Store reviews of the three most popular migraine apps and color-coded the gaps.
-
-| App | What users struggle with |
-|---|---|
-| **Migraine Buddy** | Hard to use and slow to fill in · asks if a treatment worked far too soon ("Nothing works that fast") · hard to see patterns · attacks fail to save · asks for personal information |
-| **Bearable** | Time-consuming and confusing · tracks symptoms but doesn't help treat them · doesn't explain patterns · health data doesn't sync · feels invasive · key features need premium |
-| **N1-Headache** | Painfully slow to type in · can't adjust medication doses · rigid limits and 90-day lockouts · no support or updates |
-
-<details>
-
-
-</details>
-
-## How Halo is different
-
-| Feature | Migraine Buddy | Bearable | N1-Headache | **Halo** |
-|---|:---:|:---:|:---:|:---:|
-| Fast / voice logging | ❌ | Partial | ❌ | ✅ |
-| Computed medication effectiveness | ❌ | ❌ | ❌ | ✅ |
-| AI treatment insight (plain language) | ❌ | ❌ | ❌ | ✅ |
-| AI symptom Q&A (grounded, advisory only) | ❌ | ❌ | ❌ | ✅ |
-| Neurologist-ready report | ✅ | Partial | ✅ | ✅ |
-| Preventative pattern alerts | Partial | ❌ | Partial | ✅ |
-| Companion website | ✅ | ✅ | ✅ | Planned |
-
-**Halo closes the loop from logging an attack to knowing what works:**
-
-- ⚡ **Quick logging** — pain, side, symptoms, triggers, and medication on one screen, in under a minute.
-- 🎙️ **Voice-assisted entry** — say "seven out of ten, right side, nausea" and the form fills itself.
-- ⏱️ **Delayed relief rating** — relief is rated after the attack ends, so time-to-relief is measured, not guessed.
-- 🧠 **AI treatment insight** — a plain-language answer to "what's actually working for me?"
-- 💬 **Symptom Companion** — quick answers to questions like "is this a side effect?", grounded in medication reference data and always advisory, never diagnostic.
-- ☁️ **Works offline** — logs save on the phone first, then sync to the cloud.
-
-## A day with Halo
-
-| Time | What happens |
-|---|---|
-| 9:14 AM | Maria feels an attack starting and says: "migraine, seven out of ten, right side, nausea." Logged in 12 seconds. |
-| 9:16 AM | She logs the sumatriptan she took. Halo starts a timer — it doesn't ask her to rate it yet. |
-| 11:40 AM | The attack ends. She rates her relief 8/10; Halo calculates a time-to-relief of 2 h 24 min. |
-| 2 weeks later | Halo's AI insight shows sumatriptan resolves her attacks faster than her other medication. |
-| That evening | She asks the Symptom Companion about a stiff neck; it answers from reference data and reminds her to tell her neurologist. |
-
-## Roadmap
-
-Five sprints, following Agile Scrum. Each sprint ends with a deliverable.
-
-| Sprint | Focus | Deliverable | Status |
-|---|---|---|---|
-| **0** | Foundation — background, research, proposal | Approved proposal, backed by research | ✅ Complete |
-| **1** | Core logging — Firebase + auth, login/signup screens, quick-log flow (< 60 s), voice-assisted entry, medication library, local + cloud sync | Accounts + attack and medication logging, online and offline | 🚧 In progress |
-| **2** | Effectiveness + reports — delayed relief rating, time-to-relief, history and trends, PDF export | MVP locked: effectiveness, history, and PDF report | Planned |
-| **3** | AI layer — Cloud Functions + LLM, treatment-insight engine, Symptom Companion, preventative alerts | AI insight, Symptom Companion, and alerts live | Planned |
-| **4** | Harden + demo — security-rule audit, automated tests, accessibility, docs | Tested, accessible, demoable app + docs | Planned |
-
-## Future work
-
-- **Near-term:** a social circle notified when an attack is logged · a check-in timer during an active attack · a manual "Call 911" button for red-flag symptoms · a curated migraine news and research feed
-- **Clinical integration:** real-time connection to a doctor (telehealth)
-- **Emerging technology:** quantum computing (no role in Halo today; early research explores faster drug-response modeling)
 
 ## Tech stack
 
-| Layer | Technology |
-|---|---|
-| Mobile app | React Native with Expo, TypeScript — one codebase for iPhone and Android |
-| Accounts | Firebase Authentication |
-| Database | Cloud Firestore, with per-user security rules |
-| Server & AI gateway | Firebase Cloud Functions (Node.js) — the only place the AI key is stored |
-| AI | A pretrained large language model called through an API, grounded in curated medication reference data. No model is trained on user data. |
-| Testing | Jest |
-| Design | Figma |
-| Build & deploy | Expo (EAS Build) |
-| Source control | Git + GitHub |
+- **React Native + Expo** (SDK 58), **TypeScript**
+- **React Navigation** (native stack)
+- **Firebase Authentication** (email and password) and **Cloud Firestore**
+- **AsyncStorage**, which keeps the log in on the phone
 
-## Repository structure
+## Project structure
 
 ```
-halo-migraine-companion/
-├── README.md                        You are here
-└── app/                             Mobile app source (added in Sprint 1)
+app/
+├── App.tsx                 # navigation: signed-out stack and signed-in stack
+├── src/
+│   ├── components/         # Button, FormField, HaloLogo, PasswordChecklist, Chip
+│   ├── screens/            # Splash, Welcome, About, Log In, Sign Up, Forgot Password, Home, ...
+│   ├── services/           # firebase.ts, userProfile.ts, ...
+│   ├── navigation/         # route types
+│   ├── theme/              # halo colours
+│   └── utils/              # password rules, sign-up state, ...
+├── .env.example            # the variables you need (no real keys)
+└── package.json
+docs/
+└── sprint-1/               # report, diagrams (draw.io + PNG), UI designs, test and feedback logs
 ```
 
-## References
+## Getting started
 
-- GBD 2021 Headache Disorders Collaborators, "Global, regional, and national burden of headache disorders, 1990–2021, with forecasts to 2050," 2024.
-- A. Stubberud et al., "Forecasting migraine with machine learning based on mobile phone diary and wearable data," *Cephalalgia*, vol. 43, no. 5, 2023.
-- S. Lysk et al., "Engagement and predictors of use of a smartphone app for migraine self-management: A secondary analysis of the EMMA trial," *Headache*, vol. 66, 2026.
-- L. Rabany et al., "Machine learning assessment of next-day migraine likelihood using data from 53,000 app users living with migraine," *Neurology Open Access*, vol. 2, no. 3, 2026.
-- American Migraine Foundation, "Migraine Resources & Support," 2026.
+**You need:** Node.js (LTS), the **Expo Go** app on your phone, and a Firebase project with **Email/Password** sign-in and **Cloud Firestore** turned on.
 
-## Disclaimer
+```bash
+git clone https://github.com/skrishnan83/halo-migraine-companion.git
+cd halo-migraine-companion/app
+npm install
+npx expo start              # scan the QR code with Expo Go
+```
 
-Halo is in active development.
+If the phone can't reach the laptop (for example on campus or office Wi-Fi), start with `npx expo start --tunnel`.
 
----
+### Environment variables
 
+All keys are read from `app/.env`, which is **never committed**. See [`app/.env.example`](app/.env.example):
+
+```
+EXPO_PUBLIC_FIREBASE_API_KEY=
+EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=
+EXPO_PUBLIC_FIREBASE_PROJECT_ID=
+EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=
+EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+EXPO_PUBLIC_FIREBASE_APP_ID=
+EXPO_PUBLIC_GROQ_API_KEY=
+```
+
+### Firestore security rules (pattern used)
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
+
+## Testing
+
+Sprint 1 was tested by hand on a real iPhone (Expo Go) against the live Firebase project, and results were checked in the Firebase console. Every test, with its expected result, actual result and date, is in the [Sprint 1 test log](docs/sprint-1/test-log.md). Automated tests are planned for Sprint 4.
+
+## Roadmap
+
+| Sprint | Deliverable                                                                                                     | Status         |
+| ------ | --------------------------------------------------------------------------------------------------------------- | -------------- |
+| 0      | Approved proposal and project repository                                                                        | ✅ Done        |
+| 1      | Splash, Welcome, About halo, Create Account, Log In, Forgot Password                                            | ✅ Done        |
+| 2      | Log a Migraine (with voice note), My Medications, relief ratings, History and Trends, PDF report for the doctor | 🔄 In progress |
+| 3      | AI layer: treatment insights, Symptom Companion, preventative alerts                                            | Planned        |
+| 4      | Harden and demo: security review, automated tests, accessibility                                                | Planned        |
+
+## Team
+
+- **Smita Krishnan**, developer ([@skrishnan83](https://github.com/skrishnan83))
+- **Sai Charan Beemara**, project manager and team leader
+- **Dr. V. Govindaswamy**, client
+
+BatWarriors LLC
