@@ -3,6 +3,7 @@
 **Sprint goal:** the front door of the app, meaning the Splash, Welcome and About halo screens, plus user accounts (Create Account, Log In, Forgot Password).
 **Result:** every planned item was built, run on a real iPhone and tested.
 **Video:** [Sprint 1 review on YouTube](https://youtu.be/q9u9FglU0hU)
+**LinkedIn:** [Sprint 1 review on LinkedIn](https://www.linkedin.com/posts/krishnansmita_halo-ai-migraine-care-companion-sprint-activity-7524269944428072960-sfyS?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAL-jvEBG3XA5cCh-Z3noyzpP1Fi4LZ61wk)
 
 Contents:
 1. [Deliverables](#1-deliverables)
