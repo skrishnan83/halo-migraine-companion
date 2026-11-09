@@ -28,7 +28,7 @@
 | **Home and Log Out** | Home greets the person; Log Out returns to the splash and Welcome.                                                                                                                                                                 |
 | **Private data**     | A profile is saved in Cloud Firestore, and security rules let each person read and write only their own data.                                                                                                                      |
 
-Full Sprint 1 documentation, including diagrams, UI designs, the test log and the feedback decision log, is in [`docs/sprint-1`](docs/sprint-1/README.md).
+Full Sprint 1 documentation, including UI designs, the test log and the feedback decision log, is in [`docs/sprint-1`](docs/sprint-1/README.md).
 
 ---
 
@@ -54,7 +54,7 @@ app/
 ├── .env.example            # the variables you need (no real keys)
 └── package.json
 docs/
-└── sprint-1/               # report, diagrams (draw.io + PNG), UI designs, test and feedback logs
+└── sprint-1/               # report, UI designs, test and feedback logs
 ```
 
 ## Getting started
