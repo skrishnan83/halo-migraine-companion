@@ -9,8 +9,8 @@
 | **Current release**   | Sprint 1: Welcome, About halo and user accounts                                          |
 | **Next**              | Sprint 2: Log a Migraine, My Medications, relief ratings, History and Trends, PDF report |
 | **Platform**          | iPhone and Android, through Expo Go (Expo SDK 58)                                        |
-| **Video walkthrough** | [Sprint 1 review on YouTube](YOUTUBE_LINK)                                               |
-| **LinkedIn**          | [Sprint 1 review on LinkedIn](LINK)                                                      |
+| **Video walkthrough** | [Sprint 1 review on YouTube](https://youtu.be/q9u9FglU0hU)                               |
+| **LinkedIn**          | [Sprint 1 review on LinkedIn](https://www.linkedin.com/posts/krishnansmita_halo-ai-migraine-care-companion-sprint-activity-7524269944428072960-sfyS?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAL-jvEBG3XA5cCh-Z3noyzpP1Fi4LZ61wk)                                                      |
 
 ---
 

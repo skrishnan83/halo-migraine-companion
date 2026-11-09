@@ -90,6 +90,12 @@ export default function QuickLogScreen({
     }
   }
 
+  // tapToSpeak() in the FSM: the mic button starts or stops the recording.
+  function tapToSpeak() {
+    if (voice === "recording") stopVoice();
+    else startVoice();
+  }
+
   async function stopVoice() {
     setVoice("transcribing");
     try {
@@ -113,7 +119,7 @@ export default function QuickLogScreen({
     }
   }
 
-  async function handleSave() {
+  async function saveLog() {
     const uid = auth.currentUser?.uid;
     if (!uid) {
       setError("You need to be logged in.");
@@ -157,7 +163,7 @@ export default function QuickLogScreen({
           <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
             <Text style={styles.back}>‹ Back</Text>
           </Pressable>
-          <Text style={styles.title}>Log a migraine</Text>
+          <Text style={styles.title}>Log a Migraine</Text>
 
           <Text style={styles.section}>How severe is it?</Text>
           <View style={styles.severityGrid}>
@@ -229,7 +235,7 @@ export default function QuickLogScreen({
 
           <Text style={styles.section}>Add a note by voice</Text>
           <Pressable
-            onPress={voice === "recording" ? stopVoice : startVoice}
+            onPress={tapToSpeak}
             disabled={voice === "transcribing"}
             style={[styles.micBtn, voice === "recording" && styles.micBtnOn]}
           >
@@ -272,7 +278,7 @@ export default function QuickLogScreen({
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          <Button title="Save" onPress={handleSave} loading={saving} />
+          <Button title="Save" onPress={saveLog} loading={saving} />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

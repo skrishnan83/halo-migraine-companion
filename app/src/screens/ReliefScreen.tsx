@@ -1,7 +1,6 @@
 // RELIEF ("How did it go?"): after an attack, rate what you took, how much it helped,
 // and how long it took to ease. Saved on the phone first, then synced like logs.
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,7 +9,8 @@ import Chip from "../components/Chip";
 import FormField from "../components/FormField";
 import type { ScreenProps } from "../navigation/types";
 import { queueRelief, syncPending } from "../services/attackQueue";
-import { auth, db } from "../services/firebase";
+import { auth } from "../services/firebase";
+import { loadMedications } from "../services/medications";
 import { colors } from "../theme/colors";
 import {
   EASE_OPTIONS,
@@ -47,24 +47,11 @@ export default function ReliefScreen({
         (raw) => raw && setMeds((cur) => (cur.length ? cur : JSON.parse(raw))),
       )
       .catch(() => {});
-    const q = query(
-      collection(db, "users", uid, "medications"),
-      orderBy("name"),
-    );
-    return onSnapshot(
-      q,
-      (snap) => {
-        const names = snap.docs.map((d) => {
-          const m = d.data() as { name: string; dose?: string };
-          return m.dose ? `${m.name} ${m.dose}` : m.name;
-        });
-        setMeds(names);
-        AsyncStorage.setItem(medsKey(uid), JSON.stringify(names)).catch(
-          () => {},
-        );
-      },
-      (e) => console.warn("Could not load medications", e),
-    );
+    return loadMedications(uid, (list) => {
+      const names = list.map((m) => (m.dose ? `${m.name} ${m.dose}` : m.name));
+      setMeds(names);
+      AsyncStorage.setItem(medsKey(uid), JSON.stringify(names)).catch(() => {});
+    });
   }, [uid]);
 
   // A rating made earlier with a medication that is no longer on the list.
@@ -73,7 +60,7 @@ export default function ReliefScreen({
     choices.push(medication);
   }
 
-  async function handleSave() {
+  async function saveRelief() {
     if (!uid) return;
     const took = other.trim() || medication;
     if (!took) {
@@ -116,7 +103,7 @@ export default function ReliefScreen({
         <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
           <Text style={styles.back}>‹ Back</Text>
         </Pressable>
-        <Text style={styles.title}>How did it go?</Text>
+        <Text style={styles.title}>How Did It Go?</Text>
         <Text style={styles.sub}>
           {formatWhen(startedAtMs)} · Severity {severity}
         </Text>
@@ -179,7 +166,7 @@ export default function ReliefScreen({
         ) : null}
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Button title="Save" onPress={handleSave} loading={saving} />
+        <Button title="Save" onPress={saveRelief} loading={saving} />
       </ScrollView>
     </SafeAreaView>
   );

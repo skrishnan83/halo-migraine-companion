@@ -1,14 +1,4 @@
 // MEDICATIONS: your personal list of medications. Add one, tap Remove to delete one.
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import {
   Alert,
@@ -24,10 +14,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import FormField from "../components/FormField";
 import type { ScreenProps } from "../navigation/types";
-import { auth, db } from "../services/firebase";
+import { auth } from "../services/firebase";
+import {
+  loadMedications,
+  removeMedication,
+  saveMedication,
+  type Medication,
+} from "../services/medications";
 import { colors } from "../theme/colors";
-
-type Medication = { id: string; name: string; dose: string };
 
 export default function MedicationsScreen({
   navigation,
@@ -42,26 +36,15 @@ export default function MedicationsScreen({
   useEffect(() => {
     const uid = auth.currentUser?.uid;
     if (!uid) return;
-    const q = query(
-      collection(db, "users", uid, "medications"),
-      orderBy("name"),
-    );
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        setMeds(
-          snapshot.docs.map((d) => ({
-            id: d.id,
-            ...(d.data() as Omit<Medication, "id">),
-          })),
-        );
-      },
-      (e) => console.warn("Could not load medications", e),
-    );
-    return unsubscribe;
+    return loadMedications(uid, setMeds);
   }, []);
 
-  async function handleAdd() {
+  function clearForm() {
+    setName("");
+    setDose("");
+  }
+
+  async function addMedication() {
     const uid = auth.currentUser?.uid;
     if (!uid) return;
     if (!name.trim()) {
@@ -71,13 +54,8 @@ export default function MedicationsScreen({
     setError("");
     setSaving(true);
     try {
-      await addDoc(collection(db, "users", uid, "medications"), {
-        name: name.trim(),
-        dose: dose.trim(),
-        createdAt: serverTimestamp(),
-      });
-      setName("");
-      setDose("");
+      await saveMedication(uid, name.trim(), dose.trim());
+      clearForm();
     } catch (e) {
       console.warn("Save failed", e);
       setError("Couldn't save. Please check your connection and try again.");
@@ -86,7 +64,7 @@ export default function MedicationsScreen({
     }
   }
 
-  function confirmRemove(med: Medication) {
+  function tapRemove(med: Medication) {
     Alert.alert(
       "Remove medication?",
       `${med.name} will be removed from your list.`,
@@ -97,7 +75,14 @@ export default function MedicationsScreen({
           style: "destructive",
           onPress: () => {
             const uid = auth.currentUser?.uid;
-            if (uid) deleteDoc(doc(db, "users", uid, "medications", med.id));
+            if (!uid) return;
+            removeMedication(uid, med.id).catch((e) => {
+              console.warn("Remove failed", e);
+              Alert.alert(
+                "Couldn't remove",
+                "Please check your connection and try again.",
+              );
+            });
           },
         },
       ],
@@ -120,7 +105,7 @@ export default function MedicationsScreen({
               <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
                 <Text style={styles.back}>‹ Back</Text>
               </Pressable>
-              <Text style={styles.title}>My medications</Text>
+              <Text style={styles.title}>My Medications</Text>
 
               <View style={styles.form}>
                 <FormField
@@ -137,8 +122,8 @@ export default function MedicationsScreen({
                 />
                 {error ? <Text style={styles.error}>{error}</Text> : null}
                 <Button
-                  title="Add medication"
-                  onPress={handleAdd}
+                  title="Add Medication"
+                  onPress={addMedication}
                   loading={saving}
                 />
               </View>
@@ -159,7 +144,7 @@ export default function MedicationsScreen({
                   <Text style={styles.cardDose}>{item.dose}</Text>
                 ) : null}
               </View>
-              <Pressable onPress={() => confirmRemove(item)} hitSlop={10}>
+              <Pressable onPress={() => tapRemove(item)} hitSlop={10}>
                 <Text style={styles.remove}>Remove</Text>
               </Pressable>
             </View>

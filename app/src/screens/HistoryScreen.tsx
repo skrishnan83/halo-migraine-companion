@@ -11,10 +11,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import Chip from "../components/Chip";
-import { useAttacks } from "../hooks/useAttacks";
+import { useAttacks, type AttackItem } from "../hooks/useAttacks";
 import type { ScreenProps } from "../navigation/types";
 import { auth } from "../services/firebase";
-import { shareReport } from "../services/report";
+import { openShareSheet } from "../services/report";
 import { colors } from "../theme/colors";
 import { formatMinutes, reliefSummary } from "../utils/relief";
 import {
@@ -31,12 +31,23 @@ export default function HistoryScreen({ navigation }: ScreenProps<"History">) {
   const [range, setRange] = useState(RANGES[0]);
   const [sharing, setSharing] = useState(false);
 
+  // These names match the FSM and sequence diagrams.
+  const chooseRange = (r: (typeof RANGES)[number]) => setRange(r);
+  function tapAttack(a: AttackItem) {
+    navigation.navigate("Relief", {
+      attackId: a.id,
+      severity: a.severity,
+      startedAtMs: a.startedAtMs,
+      relief: a.relief,
+    });
+  }
+
   const shown = inRange(items, range.days);
   const s = summarise(shown);
   const weeks = weeklyCounts(items);
   const tallest = Math.max(1, ...weeks.map((w) => w.count));
 
-  async function handleShare() {
+  async function shareReport() {
     if (shown.length === 0) {
       Alert.alert(
         "Nothing to share yet",
@@ -46,7 +57,7 @@ export default function HistoryScreen({ navigation }: ScreenProps<"History">) {
     }
     setSharing(true);
     try {
-      await shareReport(
+      await openShareSheet(
         shown,
         `Last ${range.label}`.replace("Last All", "All attacks"),
         auth.currentUser?.email ?? "",
@@ -65,7 +76,7 @@ export default function HistoryScreen({ navigation }: ScreenProps<"History">) {
         <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
           <Text style={styles.back}>‹ Back</Text>
         </Pressable>
-        <Text style={styles.title}>History and trends</Text>
+        <Text style={styles.title}>History and Trends</Text>
 
         <View style={styles.row}>
           {RANGES.map((r) => (
@@ -73,7 +84,7 @@ export default function HistoryScreen({ navigation }: ScreenProps<"History">) {
               key={r.label}
               label={r.label}
               selected={range.label === r.label}
-              onPress={() => setRange(r)}
+              onPress={() => chooseRange(r)}
             />
           ))}
         </View>
@@ -150,8 +161,8 @@ export default function HistoryScreen({ navigation }: ScreenProps<"History">) {
         </Text>
 
         <Button
-          title="Share PDF report for my doctor"
-          onPress={handleShare}
+          title="Share PDF Report for My Doctor"
+          onPress={shareReport}
           loading={sharing}
         />
 
@@ -160,14 +171,7 @@ export default function HistoryScreen({ navigation }: ScreenProps<"History">) {
           <Pressable
             key={a.id}
             style={styles.card}
-            onPress={() =>
-              navigation.navigate("Relief", {
-                attackId: a.id,
-                severity: a.severity,
-                startedAtMs: a.startedAtMs,
-                relief: a.relief,
-              })
-            }
+            onPress={() => tapAttack(a)}
           >
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{a.severity}</Text>

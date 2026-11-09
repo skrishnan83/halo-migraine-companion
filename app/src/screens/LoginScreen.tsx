@@ -47,7 +47,11 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
   const [loading, setLoading] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);
 
-  async function handleLogin() {
+  // These names match the FSM diagram.
+  const forgotPassword = () => navigation.navigate("ForgotPassword");
+  const createAccount = () => navigation.navigate("Signup");
+
+  async function logIn() {
     if (!email.trim() || !password) {
       setError("Please enter your email and password.");
       return;
@@ -73,7 +77,7 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
             "Too many attempts",
             "You've tried 3 times. Reset your password to continue.",
           );
-          navigation.navigate("ForgotPassword");
+          forgotPassword();
           return;
         }
         setFailedAttempts(next);
@@ -126,21 +130,15 @@ export default function LoginScreen({ navigation }: ScreenProps<"Login">) {
             secureTextEntry
           />
 
-          <Pressable
-            onPress={() => navigation.navigate("ForgotPassword")}
-            style={styles.forgot}
-          >
+          <Pressable onPress={forgotPassword} style={styles.forgot}>
             <Text style={styles.link}>Forgot password?</Text>
           </Pressable>
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          <Button title="Log In" onPress={handleLogin} loading={loading} />
+          <Button title="Log In" onPress={logIn} loading={loading} />
 
-          <Pressable
-            onPress={() => navigation.navigate("Signup")}
-            style={styles.linkRow}
-          >
+          <Pressable onPress={createAccount} style={styles.linkRow}>
             <Text style={styles.linkText}>
               New user? <Text style={styles.link}>Create an account</Text>
             </Text>

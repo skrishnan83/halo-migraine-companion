@@ -114,7 +114,7 @@ export function buildReportHtml(
 }
 
 // Makes the PDF and opens the share sheet (Mail, Messages, Files, AirDrop...).
-export async function shareReport(
+export async function openShareSheet(
   items: AttackItem[],
   rangeLabel: string,
   email: string,

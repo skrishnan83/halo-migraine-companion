@@ -32,17 +32,20 @@ export default function App() {
 
   // Firebase tells us whenever someone logs in or out.
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      // A new account is being created: stay on the account screens.
-      if (signupState.creating) return;
-      setUser(firebaseUser);
-      setChecking(false);
-      if (firebaseUser) {
-        ensureUserProfile(firebaseUser).catch((e) =>
-          console.warn("Profile save failed", e),
-        );
-      }
-    });
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      function savedLogin(firebaseUser) {
+        // A new account is being created: stay on the account screens.
+        if (signupState.creating) return;
+        setUser(firebaseUser);
+        setChecking(false);
+        if (firebaseUser) {
+          ensureUserProfile(firebaseUser).catch((e) =>
+            console.warn("Profile save failed", e),
+          );
+        }
+      },
+    );
     return unsubscribe;
   }, []);
 

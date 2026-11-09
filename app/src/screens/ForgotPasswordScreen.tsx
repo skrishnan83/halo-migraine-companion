@@ -21,6 +21,9 @@ import { colors } from "../theme/colors";
 export default function ForgotPasswordScreen({
   navigation,
 }: ScreenProps<"ForgotPassword">) {
+  // This name matches the FSM diagram.
+  const backToLogIn = () => navigation.navigate("Login");
+
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
@@ -38,7 +41,8 @@ export default function ForgotPasswordScreen({
       setSent(true);
     } catch (e) {
       const code = (e as { code?: string }).code;
-      if (code === "auth/invalid-email") {
+      const emailNotValid = code === "auth/invalid-email";
+      if (emailNotValid) {
         setError("That email address doesn't look right.");
       } else if (code === "auth/network-request-failed") {
         setError("No internet connection. Please check and try again.");
@@ -105,7 +109,7 @@ export default function ForgotPasswordScreen({
           <Button
             title="Back to Log In"
             variant="secondary"
-            onPress={() => navigation.navigate("Login")}
+            onPress={backToLogIn}
           />
         </ScrollView>
       </KeyboardAvoidingView>

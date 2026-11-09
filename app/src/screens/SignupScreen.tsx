@@ -38,13 +38,16 @@ function friendlyError(code?: string): string {
 }
 
 export default function SignupScreen({ navigation }: ScreenProps<"Signup">) {
+  // This name matches the FSM diagram.
+  const logIn = () => navigation.navigate("Login");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSignup() {
+  async function createAccount() {
     if (!email.trim() || !password) {
       setError("Please fill in all the boxes.");
       return;
@@ -125,14 +128,11 @@ export default function SignupScreen({ navigation }: ScreenProps<"Signup">) {
 
           <Button
             title="Create Account"
-            onPress={handleSignup}
+            onPress={createAccount}
             loading={loading}
           />
 
-          <Pressable
-            onPress={() => navigation.navigate("Login")}
-            style={styles.linkRow}
-          >
+          <Pressable onPress={logIn} style={styles.linkRow}>
             <Text style={styles.linkText}>
               Already have an account? <Text style={styles.link}>Log in</Text>
             </Text>

@@ -8,6 +8,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  type QuerySnapshot,
 } from "firebase/firestore";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -48,6 +49,22 @@ function reliefFromDb(r: ReliefFromDb | undefined): Relief | undefined {
   };
 }
 
+// loadAttacks() in the diagrams: listens to your attacks in the database, newest first.
+function loadAttacks(
+  uid: string,
+  max: number,
+  onChange: (snapshot: QuerySnapshot) => void,
+) {
+  const q = query(
+    collection(db, "users", uid, "attacks"),
+    orderBy("startedAt", "desc"),
+    limit(max),
+  );
+  return onSnapshot(q, onChange, (e) =>
+    console.warn("Could not load attacks", e),
+  );
+}
+
 export function useAttacks(max: number) {
   const uid = auth.currentUser?.uid;
   const cacheKey = uid ? `halo.cache.${max}.${uid}` : "";
@@ -70,35 +87,26 @@ export function useAttacks(max: number) {
   // 2. Live updates from the cloud.
   useEffect(() => {
     if (!uid) return;
-    const q = query(
-      collection(db, "users", uid, "attacks"),
-      orderBy("startedAt", "desc"),
-      limit(max),
-    );
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        // Offline and nothing cached by Firebase: keep showing the saved list.
-        if (snapshot.metadata.fromCache && snapshot.empty) return;
-        const items: AttackItem[] = snapshot.docs.map((d) => {
-          const data = d.data();
-          return {
-            id: d.id,
-            severity: data.severity,
-            startedAtMs: data.startedAt.toMillis(),
-            symptoms: data.symptoms ?? [],
-            note: data.note ?? "",
-            relief: reliefFromDb(data.relief),
-            pending: false,
-          };
-        });
-        setRemote(items);
-        if (!snapshot.metadata.fromCache) {
-          AsyncStorage.setItem(cacheKey, JSON.stringify(items)).catch(() => {});
-        }
-      },
-      (e) => console.warn("Could not load attacks", e),
-    );
+    const unsubscribe = loadAttacks(uid, max, (snapshot) => {
+      // Offline and nothing cached by Firebase: keep showing the saved list.
+      if (snapshot.metadata.fromCache && snapshot.empty) return;
+      const items: AttackItem[] = snapshot.docs.map((d) => {
+        const data = d.data();
+        return {
+          id: d.id,
+          severity: data.severity,
+          startedAtMs: data.startedAt.toMillis(),
+          symptoms: data.symptoms ?? [],
+          note: data.note ?? "",
+          relief: reliefFromDb(data.relief),
+          pending: false,
+        };
+      });
+      setRemote(items);
+      if (!snapshot.metadata.fromCache) {
+        AsyncStorage.setItem(cacheKey, JSON.stringify(items)).catch(() => {});
+      }
+    });
     return unsubscribe;
   }, [uid, max, cacheKey]);
 

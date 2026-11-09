@@ -5,7 +5,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import HaloLogo from "../components/HaloLogo";
-import { useAttacks } from "../hooks/useAttacks";
+import { useAttacks, type AttackItem } from "../hooks/useAttacks";
 import type { ScreenProps } from "../navigation/types";
 import { auth } from "../services/firebase";
 import { colors } from "../theme/colors";
@@ -21,6 +21,20 @@ function greeting(): string {
 
 export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
   const { items, online, waitingCount } = useAttacks(10);
+
+  // These names match the FSM, HTA and sequence diagrams.
+  const logAMigraine = () => navigation.navigate("QuickLog");
+  const myMedications = () => navigation.navigate("Medications");
+  const history = () => navigation.navigate("History");
+  const logOut = () => signOut(auth);
+  function tapAttack(item: AttackItem) {
+    navigation.navigate("Relief", {
+      attackId: item.id,
+      severity: item.severity,
+      startedAtMs: item.startedAtMs,
+      relief: item.relief,
+    });
+  }
 
   let statusText = "All synced";
   let statusColor = colors.sage;
@@ -43,24 +57,17 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
       </View>
 
       <View style={styles.actions}>
-        <Button
-          title="Log a migraine"
-          onPress={() => navigation.navigate("QuickLog")}
-        />
+        <Button title="Log a Migraine" onPress={logAMigraine} />
         <View style={styles.pair}>
           <View style={styles.half}>
             <Button
-              title="My medications"
+              title="My Medications"
               variant="secondary"
-              onPress={() => navigation.navigate("Medications")}
+              onPress={myMedications}
             />
           </View>
           <View style={styles.half}>
-            <Button
-              title="History"
-              variant="secondary"
-              onPress={() => navigation.navigate("History")}
-            />
+            <Button title="History" variant="secondary" onPress={history} />
           </View>
         </View>
       </View>
@@ -81,22 +88,12 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
         ListEmptyComponent={
           <View style={styles.emptyCard}>
             <Text style={styles.emptyText}>
-              No attacks logged yet. Tap "Log a migraine" when one starts.
+              No attacks logged yet. Tap "Log a Migraine" when one starts.
             </Text>
           </View>
         }
         renderItem={({ item }) => (
-          <Pressable
-            style={styles.card}
-            onPress={() =>
-              navigation.navigate("Relief", {
-                attackId: item.id,
-                severity: item.severity,
-                startedAtMs: item.startedAtMs,
-                relief: item.relief,
-              })
-            }
-          >
+          <Pressable style={styles.card} onPress={() => tapAttack(item)}>
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{item.severity}</Text>
             </View>
@@ -115,7 +112,7 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
                   {reliefSummary(item.relief)}
                 </Text>
               ) : (
-                <Text style={styles.rate}>Tap to rate relief ›</Text>
+                <Text style={styles.rate}>Tap to Rate Relief ›</Text>
               )}
             </View>
           </Pressable>
@@ -124,7 +121,7 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
 
       <View style={styles.footer}>
         <Text style={styles.email}>Signed in as {auth.currentUser?.email}</Text>
-        <Pressable onPress={() => signOut(auth)} hitSlop={12}>
+        <Pressable onPress={logOut} hitSlop={12}>
           <Text style={styles.logoutText}>Log out</Text>
         </Pressable>
       </View>

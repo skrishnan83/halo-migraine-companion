@@ -14,6 +14,11 @@ const FEATURES: { icon: keyof typeof Ionicons.glyphMap; label: string }[] = [
 ];
 
 export default function WelcomeScreen({ navigation }: ScreenProps<"Welcome">) {
+  // These names match the FSM diagram.
+  const logIn = () => navigation.navigate("Login");
+  const createAccount = () => navigation.navigate("Signup");
+  const aboutHalo = () => navigation.navigate("About");
+
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.top}>
@@ -33,17 +38,13 @@ export default function WelcomeScreen({ navigation }: ScreenProps<"Welcome">) {
       </View>
 
       <View style={styles.bottom}>
-        <Button title="Log In" onPress={() => navigation.navigate("Login")} />
+        <Button title="Log In" onPress={logIn} />
         <Button
           title="Create Account"
           variant="secondary"
-          onPress={() => navigation.navigate("Signup")}
+          onPress={createAccount}
         />
-        <Pressable
-          onPress={() => navigation.navigate("About")}
-          style={styles.aboutLink}
-          hitSlop={10}
-        >
+        <Pressable onPress={aboutHalo} style={styles.aboutLink} hitSlop={10}>
           <Ionicons
             name="information-circle-outline"
             size={20}
