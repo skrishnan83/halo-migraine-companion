@@ -111,10 +111,5 @@ Sprint 1 was tested by hand on a real iPhone (Expo Go) against the live Firebase
 | 3      | AI layer: treatment insights, Symptom Companion, preventative alerts                                            | Planned        |
 | 4      | Harden and demo: security review, automated tests, accessibility                                                | Planned        |
 
-## Team
-
-- **Smita Krishnan**, developer ([@skrishnan83](https://github.com/skrishnan83))
-- **Sai Charan Beemara**, project manager and team leader
-- **Dr. V. Govindaswamy**, client
 
 BatWarriors LLC
