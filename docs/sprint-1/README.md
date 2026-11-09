@@ -8,11 +8,10 @@
 Contents:
 1. [Deliverables](#1-deliverables)
 2. [Comparison chart: implemented vs planned](#2-comparison-chart-implemented-vs-planned)
-3. [Design diagrams (draw.io)](#3-design-diagrams-drawio)
-4. [UI designs (Figma)](#4-ui-designs-figma)
-5. [Implementation and testing](#5-implementation-and-testing)
-6. [Feedback decision log](#6-feedback-decision-log)
-7. [Agile review](#7-agile-review)
+3. [UI designs (Figma)](#3-ui-designs-figma)
+4. [Implementation and testing](#4-implementation-and-testing)
+5. [Feedback decision log](#5-feedback-decision-log)
+6. [Agile review](#6-agile-review)
 
 ---
 
@@ -58,33 +57,13 @@ Partial = present in a limited or paid-only form.
 | Preventative pattern alerts | Partial | ❌ | Partial | Planned |
 | Companion website | ✅ | ✅ | ✅ | Planned |
 
-## 3. Design diagrams (draw.io)
-
-| Diagram | Image |
-|---|---|
-| Colour key | [0_Colour_Key.png](diagrams/0_Colour_Key.png) |
-| Use case | [1a_Use_Case_Log_In_and_Create_Account.png](diagrams/1a_Use_Case_Log_In_and_Create_Account.png) |
-| Log In sequence | [2a_Log_In_Sequence.png](diagrams/2a_Log_In_Sequence.png) |
-| Create Account sequence | [2b_Create_Account_Sequence.png](diagrams/2b_Create_Account_Sequence.png) |
-| Forgot Password sequence | [2c_Forgot_Password_Sequence.png](diagrams/2c_Forgot_Password_Sequence.png) |
-| Hierarchical task analysis: Run App to Welcome | [3a_HTA_Run_App_to_Welcome.png](diagrams/3a_HTA_Run_App_to_Welcome.png) |
-| Hierarchical task analysis: Log In | [3b_HTA_Log_In.png](diagrams/3b_HTA_Log_In.png) |
-| Data & control flow | [DCF_Run_App_to_Home.png](diagrams/DCF_Run_App_to_Home.png) |
-| Data flow | [Data_Flow_Run_App_to_Home.png](diagrams/Data_Flow_Run_App_to_Home.png) |
-| Control flow | [Control_Flow_Run_App_to_Home.png](diagrams/Control_Flow_Run_App_to_Home.png) |
-| Finite state machine, Level 0 | [FSM_Level_0_Run_App_to_Home.png](diagrams/FSM_Level_0_Run_App_to_Home.png) |
-| Finite state machine, Level 1: Log In | [FSM_L1_Log_In.png](diagrams/FSM_L1_Log_In.png) |
-
-![Data and control flow](diagrams/DCF_Run_App_to_Home.png)
-
-## 4. UI designs (Figma)
+## 3. UI designs (Figma)
 
 - Each screen as PNG and SVG (drag an SVG into Figma to edit it): [`ui/screens`](ui/screens)
 
-
 **Planned design vs what was built.** Five text cards on Welcome became three icons, because the first version looked crowded. Colours and the logo now come from the halo brand files. About halo became a link on Welcome, so logging in takes fewer taps.
 
-## 5. Implementation and testing
+## 4. Implementation and testing
 
 | Requirement | Design | Screen | Implementation | Test result |
 |---|---|---|---|---|
@@ -95,11 +74,11 @@ Partial = present in a limited or paid-only form.
 
 The full test log is in [test-log.md](test-log.md).
 
-## 6. Feedback decision log
+## 5. Feedback decision log
 
 The decision for every review comment is in [feedback-log.md](feedback-log.md).
 
-## 7. Agile review
+## 6. Agile review
 
 **Problems encountered**
 - Newer Expo Go requires signing in to an Expo account on the phone.
