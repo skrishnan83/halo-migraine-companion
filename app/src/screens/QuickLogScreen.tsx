@@ -14,6 +14,7 @@ import {
   Platform,
   Pressable,
   ScrollView,
+  Share,
   StyleSheet,
   Text,
   View,
@@ -25,6 +26,9 @@ import type { ScreenProps } from "../navigation/types";
 import { auth } from "../services/firebase";
 import { transcribeAudio } from "../services/transcribe";
 import { colors } from "../theme/colors";
+
+// Severity 8 to 10 shows the "Let Someone Know" message box.
+const SEVERE_FROM = 8;
 
 const WHEN_OPTIONS = [
   { label: "Just now", minutesAgo: 0 },
@@ -119,6 +123,20 @@ export default function QuickLogScreen({
     }
   }
 
+  // letSomeoneKnow(): opens the phone's share sheet (Messages, WhatsApp...)
+  // with a ready-made text, so the person can tell family or a friend.
+  async function letSomeoneKnow() {
+    if (severity === null) return;
+    try {
+      await Share.share({
+        message: `I'm having a severe migraine (${severity}/10) and may need help. Could you check on me? (sent from halo)`,
+      });
+    } catch (e) {
+      console.warn("Share failed", e);
+      setError("Couldn't open sharing. Please try again.");
+    }
+  }
+
   async function saveLog() {
     const uid = auth.currentUser?.uid;
     if (!uid) {
@@ -184,13 +202,40 @@ export default function QuickLogScreen({
                 >
                   {n}
                 </Text>
+                {(n === 1 || n === 10) && (
+                  <Text
+                    style={[
+                      styles.scaleText,
+                      severity === n && styles.severityTextOn,
+                    ]}
+                  >
+                    {n === 1 ? "Mild" : "Extreme"}
+                  </Text>
+                )}
               </Pressable>
             ))}
           </View>
-          <View style={styles.scaleRow}>
-            <Text style={styles.scaleText}>Mild</Text>
-            <Text style={styles.scaleText}>Worst ever</Text>
-          </View>
+          {severity !== null && severity >= SEVERE_FROM && (
+            <View style={styles.alertBox}>
+              <View style={styles.alertHeader}>
+                <Ionicons
+                  name="warning-outline"
+                  size={20}
+                  color={colors.danger}
+                />
+                <Text style={styles.alertTitle}>This is a severe attack</Text>
+              </View>
+              <Text style={styles.alertText}>
+                Consider letting family or a friend know, or contacting your
+                doctor. If this feels like an emergency, call 911.
+              </Text>
+              <Button
+                title="Let Someone Know"
+                variant="secondary"
+                onPress={letSomeoneKnow}
+              />
+            </View>
+          )}
 
           <Text style={styles.section}>When did it start?</Text>
           <View style={styles.chipRow}>
@@ -320,8 +365,24 @@ const styles = StyleSheet.create({
   severityBtnOn: { backgroundColor: colors.accent },
   severityText: { fontSize: 18, fontWeight: "600", color: colors.textDark },
   severityTextOn: { color: colors.white },
-  scaleRow: { flexDirection: "row", justifyContent: "space-between" },
-  scaleText: { fontSize: 12, color: colors.muted },
+  scaleText: { fontSize: 10, color: colors.muted, marginTop: 1 },
+  alertBox: {
+    marginTop: 6,
+    padding: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: colors.danger,
+    backgroundColor: "#FEF2F2",
+  },
+  alertHeader: { flexDirection: "row", alignItems: "center", gap: 8 },
+  alertTitle: { fontSize: 16, fontWeight: "700", color: colors.danger },
+  alertText: {
+    fontSize: 14,
+    color: colors.textDark,
+    lineHeight: 20,
+    marginTop: 6,
+    marginBottom: 4,
+  },
   chipRow: { flexDirection: "row", flexWrap: "wrap" },
   chip: {
     paddingVertical: 10,
