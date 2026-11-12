@@ -78,7 +78,7 @@ The full test log is in [test-log.md](test-log.md).
 
 The decision for every review comment is in [feedback-log.md](feedback-log.md).
 
-## 6. Agile review
+## 6. Agile Scrum Review
 
 **Problems encountered**
 - Newer Expo Go requires signing in to an Expo account on the phone.
