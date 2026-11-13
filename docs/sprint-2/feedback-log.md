@@ -18,15 +18,4 @@ Every review comment since the Sprint 1 report, the decision made, and its statu
 | 2 | Correct the control flow, data flow and FSM | The diagrams flow top to bottom and follow the same sequence as the HTA | ✅ Completed 10/31/2026 |
 | 3 | Show separate sections of the FSM | The FSM is split into separate views so each part can be read up close | ✅ Completed 10/31/2026 |
 
-## Sprint 2 review: 11/11/2026
 
-| # | Comment | Decision | Status |
-|---|---|---|---|
-| 1 | FSM: don't combine Back and Close | goBack() is a loop arrow; Close App is a separate arrow to an end state | ✅ Completed 11/11/2026 |
-| 2 | Use "Agile Scrum", not only "Agile" | Changed everywhere | ✅ Completed 11/11/2026 |
-| 3 | Dates in chronological order | Test dates and dates addressed are in order | ✅ Completed 11/11/2026 |
-| 4 | Put app words in quotation marks | Buttons and screens, such as "Create Account", are quoted everywhere | ✅ Completed 11/11/2026 |
-| 5 | Arrow labels from the app's code | Arrow labels use the code's function names; return messages are spaced phrases, such as Return "Log In" page | ✅ Completed 11/11/2026 |
-| 6 | Severity: show 1 as Mild and 10 as Extreme | "Mild" under 1 and "Extreme" under 10 in the app, wireframes and diagrams | ✅ Completed 11/12/2026 |
-| 7 | At severity 8 to 10, suggest notifying someone or seeing a doctor | "This is a severe attack" box with "Let Someone Know", which opens the share sheet to text family or a friend | ✅ Completed 11/12/2026 |
-| 8 | Scan a medication to add it to My Medications | Added to future work (box or barcode scan) | 📋 Planned (future work) |
