@@ -5,7 +5,7 @@
 
 **Video:** Sprint 2 on YouTube: https://youtu.be/BMcQFon5g9g
 
-**LinkedIn:** Sprint 2 on LinkedIn: SPRINT2_LINKEDIN_LINK
+**LinkedIn:** Sprint 2 on LinkedIn: https://lnkd.in/p/g-tYanVf
 
 Contents:
 1. [Deliverables](#1-deliverables)
