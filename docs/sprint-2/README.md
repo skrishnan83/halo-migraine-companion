@@ -2,7 +2,9 @@
 
 **Sprint goal:** make halo useful during and after an attack: log a migraine in a few taps or by voice, save offline, keep a medication list, rate relief, see trends, and share a report with the doctor.
 **Result:** every planned item was built, run on a real iPhone and tested (18 tests, all passed).
-**Video:** Sprint 2 on YouTube: SPRINT2_YOUTUBE_LINK
+
+**Video:** Sprint 2 on YouTube: https://youtu.be/BMcQFon5g9g
+
 **LinkedIn:** Sprint 2 on LinkedIn: SPRINT2_LINKEDIN_LINK
 
 Contents:
