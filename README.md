@@ -138,7 +138,7 @@ Sprint 2 was tested by hand on a real iPhone (Expo Go) with a test account again
 | 1 | Splash, Welcome, About halo, Create Account, Log In, Forgot Password | ✅ Done |
 | 2 | Log a Migraine (with voice note and Let Someone Know), offline sync, My Medications, relief ratings, History and Trends, PDF report for the doctor | ✅ Done |
 | 3 | AI layer: treatment insights, Symptom Companion, preventative alerts | 🔄 Next |
-| 4 | Harden and demo: security review, automated tests, accessibility | Planned |
+| 4 | Testing and demo: security review, automated tests, accessibility | Planned |
 
 **Future work:** scan a medication (box or barcode) to add it to My Medications.
 
