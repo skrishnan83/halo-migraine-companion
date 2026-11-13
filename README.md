@@ -9,8 +9,8 @@
 | **Current release**   | Sprint 2: Log a Migraine, Let Someone Know, offline sync, My Medications, relief ratings, History and Trends, PDF report |
 | **Next**              | Sprint 3: the AI layer (treatment insights, Symptom Companion, preventative alerts)                |
 | **Platform**          | iPhone and Android, through Expo Go (Expo SDK 58)                                                 |
-| **Video walkthrough** | Sprint 2 on YouTube: SPRINT2_YOUTUBE_LINK · [Sprint 1 on YouTube](https://youtu.be/q9u9FglU0hU)    |
-| **LinkedIn**          | Sprint 2 on LinkedIn: SPRINT2_LINKEDIN_LINK · [Sprint 1 on LinkedIn](https://www.linkedin.com/posts/krishnansmita_halo-ai-migraine-care-companion-sprint-activity-7524269944428072960-sfyS?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAL-jvEBG3XA5cCh-Z3noyzpP1Fi4LZ61wk) |
+| **Video walkthrough** | Sprint 2 on YouTube: SPRINT2_YOUTUBE_LINK · [Sprint 1 on YouTube](https://youtu.be/BMcQFon5g9g)    |
+| **LinkedIn**          | Sprint 2 on LinkedIn: SPRINT2_LINKEDIN_LINK · [Sprint 1 on LinkedIn](https://lnkd.in/p/g-tYanVf) |
 
 ---
 
