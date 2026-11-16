@@ -22,6 +22,7 @@ import AboutScreen from "./src/screens/AboutScreen";
 import SplashScreen from "./src/screens/SplashScreen";
 import ReliefScreen from "./src/screens/ReliefScreen";
 import HistoryScreen from "./src/screens/HistoryScreen";
+import CompanionScreen from "./src/screens/CompanionScreen";
 import { signupState } from "./src/utils/signupState";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -69,6 +70,7 @@ export default function App() {
               <Stack.Screen name="Medications" component={MedicationsScreen} />
               <Stack.Screen name="Relief" component={ReliefScreen} />
               <Stack.Screen name="History" component={HistoryScreen} />
+              <Stack.Screen name="Companion" component={CompanionScreen} />
             </>
           ) : (
             <>

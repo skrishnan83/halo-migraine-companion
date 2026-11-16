@@ -19,6 +19,7 @@ export type RootStackParamList = {
     relief?: Relief;
   };
   History: undefined;
+  Companion: undefined;
 };
 
 export type ScreenProps<T extends keyof RootStackParamList> =

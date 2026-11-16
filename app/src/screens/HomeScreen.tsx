@@ -26,6 +26,7 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
   const logAMigraine = () => navigation.navigate("QuickLog");
   const myMedications = () => navigation.navigate("Medications");
   const history = () => navigation.navigate("History");
+  const symptomCompanion = () => navigation.navigate("Companion");
   const logOut = () => signOut(auth);
   function tapAttack(item: AttackItem) {
     navigation.navigate("Relief", {
@@ -70,6 +71,11 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
             <Button title="History" variant="secondary" onPress={history} />
           </View>
         </View>
+        <Button
+          title="Symptom Companion"
+          variant="secondary"
+          onPress={symptomCompanion}
+        />
       </View>
 
       <View style={styles.sectionRow}>
