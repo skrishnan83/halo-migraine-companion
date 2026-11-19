@@ -1,5 +1,5 @@
 // HISTORY AND TRENDS: your attacks over time, what helps, and a PDF report for your doctor.
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Pressable,
@@ -14,6 +14,7 @@ import Chip from "../components/Chip";
 import { useAttacks, type AttackItem } from "../hooks/useAttacks";
 import type { ScreenProps } from "../navigation/types";
 import { auth } from "../services/firebase";
+import { getTreatmentInsight } from "../services/insights";
 import { openShareSheet } from "../services/report";
 import { colors } from "../theme/colors";
 import { formatMinutes, reliefSummary } from "../utils/relief";
@@ -30,6 +31,9 @@ export default function HistoryScreen({ navigation }: ScreenProps<"History">) {
   const { items } = useAttacks(500);
   const [range, setRange] = useState(RANGES[0]);
   const [sharing, setSharing] = useState(false);
+  const [insight, setInsight] = useState("");
+  const [insightError, setInsightError] = useState("");
+  const [thinking, setThinking] = useState(false);
 
   // These names match the FSM and sequence diagrams.
   const chooseRange = (r: (typeof RANGES)[number]) => setRange(r);
@@ -46,6 +50,32 @@ export default function HistoryScreen({ navigation }: ScreenProps<"History">) {
   const s = summarise(shown);
   const weeks = weeklyCounts(items);
   const tallest = Math.max(1, ...weeks.map((w) => w.count));
+
+  // A new range needs a new insight.
+  useEffect(() => {
+    setInsight("");
+    setInsightError("");
+  }, [range]);
+
+  // getInsight(): "Get AI Insight" asks the AI to explain this range in plain words.
+  async function getInsight() {
+    if (s.count === 0) {
+      setInsightError("Log a migraine first, then ask for an insight.");
+      return;
+    }
+    setInsightError("");
+    setThinking(true);
+    try {
+      setInsight(await getTreatmentInsight(s, range.label));
+    } catch (e) {
+      console.warn("Insight failed", e);
+      setInsightError(
+        "Couldn't get an insight. Check your connection and try again.",
+      );
+    } finally {
+      setThinking(false);
+    }
+  }
 
   async function shareReport() {
     if (shown.length === 0) {
@@ -153,6 +183,26 @@ export default function HistoryScreen({ navigation }: ScreenProps<"History">) {
           </Text>
         )}
 
+        <Text style={styles.section}>AI insight</Text>
+        {insight ? (
+          <View style={styles.insightBox}>
+            <Text style={styles.insightText}>{insight}</Text>
+            <Text style={styles.insightNote}>
+              Made by AI from your own logs. General information only, not
+              medical advice.
+            </Text>
+          </View>
+        ) : null}
+        {insightError ? (
+          <Text style={styles.insightError}>{insightError}</Text>
+        ) : null}
+        <Button
+          title={insight ? "Refresh AI Insight" : "Get AI Insight"}
+          variant="secondary"
+          onPress={getInsight}
+          loading={thinking}
+        />
+
         <Text style={styles.section}>Most common symptoms</Text>
         <Text style={styles.empty}>
           {s.topSymptoms.length
@@ -255,6 +305,21 @@ const styles = StyleSheet.create({
   some: { color: colors.accent },
   little: { color: colors.danger },
   empty: { fontSize: 14, color: colors.muted, lineHeight: 20 },
+  insightBox: {
+    backgroundColor: colors.secondaryLight,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.sage,
+    borderRadius: 14,
+    padding: 16,
+  },
+  insightText: { fontSize: 15, color: colors.textDark, lineHeight: 22 },
+  insightNote: {
+    fontSize: 12,
+    color: colors.muted,
+    fontStyle: "italic",
+    marginTop: 10,
+  },
+  insightError: { color: colors.danger, fontSize: 14, marginTop: 4 },
   card: {
     flexDirection: "row",
     alignItems: "center",
