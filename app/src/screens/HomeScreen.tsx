@@ -1,5 +1,6 @@
 // HOME: greeting, the main actions, and your recent attacks (works offline).
 // Tap an attack to rate how it went.
+import { Ionicons } from "@expo/vector-icons";
 import { signOut } from "firebase/auth";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,6 +10,7 @@ import { useAttacks, type AttackItem } from "../hooks/useAttacks";
 import type { ScreenProps } from "../navigation/types";
 import { auth } from "../services/firebase";
 import { colors } from "../theme/colors";
+import { checkPatterns } from "../utils/alerts";
 import { reliefSummary } from "../utils/relief";
 import { formatWhen } from "../utils/stats";
 
@@ -20,7 +22,9 @@ function greeting(): string {
 }
 
 export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
-  const { items, online, waitingCount } = useAttacks(10);
+  const { items: all, online, waitingCount } = useAttacks(100);
+  const items = all.slice(0, 10); // Home lists the 10 most recent
+  const alerts = checkPatterns(all);
 
   // These names match the FSM, HTA and sequence diagrams.
   const logAMigraine = () => navigation.navigate("QuickLog");
@@ -49,48 +53,71 @@ export default function HomeScreen({ navigation }: ScreenProps<"Home">) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.hero}>
-        <View style={styles.logo}>
-          <HaloLogo size={36} />
-        </View>
-        <Text style={styles.greeting}>{greeting()}</Text>
-        <Text style={styles.title}>How are you feeling?</Text>
-      </View>
-
-      <View style={styles.actions}>
-        <Button title="Log a Migraine" onPress={logAMigraine} />
-        <View style={styles.pair}>
-          <View style={styles.half}>
-            <Button
-              title="My Medications"
-              variant="secondary"
-              onPress={myMedications}
-            />
-          </View>
-          <View style={styles.half}>
-            <Button title="History" variant="secondary" onPress={history} />
-          </View>
-        </View>
-        <Button
-          title="Symptom Companion"
-          variant="secondary"
-          onPress={symptomCompanion}
-        />
-      </View>
-
-      <View style={styles.sectionRow}>
-        <Text style={styles.section}>Recent attacks</Text>
-        <View style={styles.status}>
-          <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
-          <Text style={styles.statusText}>{statusText}</Text>
-        </View>
-      </View>
-
       <FlatList
         style={styles.list}
         data={items}
         keyExtractor={(a) => a.id}
         showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <>
+            <View style={styles.hero}>
+              <View style={styles.logo}>
+                <HaloLogo size={36} />
+              </View>
+              <Text style={styles.greeting}>{greeting()}</Text>
+              <Text style={styles.title}>How are you feeling?</Text>
+            </View>
+
+            <View style={styles.actions}>
+              <Button title="Log a Migraine" onPress={logAMigraine} />
+              <View style={styles.pair}>
+                <View style={styles.half}>
+                  <Button
+                    title="My Medications"
+                    variant="secondary"
+                    onPress={myMedications}
+                  />
+                </View>
+                <View style={styles.half}>
+                  <Button
+                    title="History"
+                    variant="secondary"
+                    onPress={history}
+                  />
+                </View>
+              </View>
+              <Button
+                title="Symptom Companion"
+                variant="secondary"
+                onPress={symptomCompanion}
+              />
+            </View>
+
+            {alerts.map((a) => (
+              <View key={a.title} style={styles.alertBox}>
+                <View style={styles.alertHeader}>
+                  <Ionicons
+                    name="alert-circle-outline"
+                    size={20}
+                    color={colors.accent}
+                  />
+                  <Text style={styles.alertTitle}>{a.title}</Text>
+                </View>
+                <Text style={styles.alertText}>{a.message}</Text>
+              </View>
+            ))}
+
+            <View style={styles.sectionRow}>
+              <Text style={styles.section}>Recent attacks</Text>
+              <View style={styles.status}>
+                <View
+                  style={[styles.statusDot, { backgroundColor: statusColor }]}
+                />
+                <Text style={styles.statusText}>{statusText}</Text>
+              </View>
+            </View>
+          </>
+        }
         ListEmptyComponent={
           <View style={styles.emptyCard}>
             <Text style={styles.emptyText}>
@@ -166,6 +193,22 @@ const styles = StyleSheet.create({
   statusDot: { width: 8, height: 8, borderRadius: 4, marginRight: 6 },
   statusText: { fontSize: 12.5, color: colors.muted, flexShrink: 1 },
   list: { flex: 1 },
+  alertBox: {
+    marginTop: 14,
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: colors.accent,
+    backgroundColor: "#FDF1EA",
+  },
+  alertHeader: { flexDirection: "row", alignItems: "center", gap: 8 },
+  alertTitle: { fontSize: 15, fontWeight: "700", color: colors.primary },
+  alertText: {
+    fontSize: 13.5,
+    color: colors.textDark,
+    lineHeight: 19,
+    marginTop: 6,
+  },
   emptyCard: {
     backgroundColor: colors.secondaryLight,
     borderRadius: 14,
