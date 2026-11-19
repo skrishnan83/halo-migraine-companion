@@ -48,6 +48,13 @@ const SYMPTOMS = [
 
 type VoiceState = "idle" | "recording" | "transcribing";
 
+function severityLabel(n: number) {
+  if (n <= 3) return "Mild";
+  if (n <= 6) return "Moderate";
+  if (n <= 8) return "Severe";
+  return "Extreme";
+}
+
 export default function QuickLogScreen({
   navigation,
 }: ScreenProps<"QuickLog">) {
@@ -202,16 +209,15 @@ export default function QuickLogScreen({
                 >
                   {n}
                 </Text>
-                {(n === 1 || n === 10) && (
-                  <Text
-                    style={[
-                      styles.scaleText,
-                      severity === n && styles.severityTextOn,
-                    ]}
-                  >
-                    {n === 1 ? "Mild" : "Extreme"}
-                  </Text>
-                )}
+                <Text
+                  numberOfLines={1}
+                  style={[
+                    styles.scaleText,
+                    severity === n && styles.severityTextOn,
+                  ]}
+                >
+                  {severityLabel(n)}
+                </Text>
               </Pressable>
             ))}
           </View>
